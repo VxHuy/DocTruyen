@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DocTruyen</string>
+    <string name="dialog_loading_message">Loading. Please wait…</string>
 </resources>

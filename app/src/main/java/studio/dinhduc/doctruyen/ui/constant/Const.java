@@ -16,5 +16,6 @@ public class Const {
 
     public class KeyIntent {
         public static final String KEY_NOVEL_DIR_PATH = "NOVEL_DIR";
+        public static final String KEY_CHAPTER_PATH = "CHAPTER_PATH";
     }
 }
