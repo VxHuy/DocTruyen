@@ -14,4 +14,7 @@ public class Const {
             Environment.getExternalStorageDirectory().getAbsolutePath();
     public static final String APP_DIR_PATH = EXTERNAL_STORAGE_PATH + File.separator + APP_DIR_NAME;
 
+    public class KeyIntent {
+        public static final String KEY_NOVEL_DIR_PATH = "NOVEL_DIR";
+    }
 }

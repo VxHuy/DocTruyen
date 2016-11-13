@@ -1,5 +1,6 @@
 package studio.dinhduc.doctruyen.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -52,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 String novelDirPath = Const.APP_DIR_PATH + File.separator + mNovelNames.get(position);
+                Intent intent = new Intent(getBaseContext(), ListChapterActivity.class);
+                intent.putExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH, novelDirPath);
+                startActivity(intent);
             }
         });
     }
