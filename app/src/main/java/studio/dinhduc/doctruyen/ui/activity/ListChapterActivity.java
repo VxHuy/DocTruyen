@@ -2,10 +2,11 @@ package studio.dinhduc.doctruyen.ui.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +26,7 @@ import studio.dinhduc.doctruyen.ui.constant.Const;
 import studio.dinhduc.doctruyen.util.CommonUtils;
 
 public class ListChapterActivity extends AppCompatActivity {
+    private static final String TAG = "ListChapterActivity";
 
     @BindView(R.id.tool_bar) Toolbar mToolBar;
     @BindView(R.id.lv_list_chapter) ListView mLvListChapter;
@@ -32,6 +34,7 @@ public class ListChapterActivity extends AppCompatActivity {
     private ArrayList<String> mChapterNames = new ArrayList<>();
     private ArrayAdapter<String> mAdapter;
     private String mNovelDirPath;
+    private SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,7 @@ public class ListChapterActivity extends AppCompatActivity {
             mChapterNames.add(chapter.getName());
         }
 
-        final Dialog dialog = CommonUtils.showLoadingDialog(this);
+        final Dialog dialog = CommonUtils.showCircleLoadingDialog(this);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -95,6 +98,31 @@ public class ListChapterActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_list_chapter, menu);
+        MenuItem item = menu.findItem(R.id.menu_list_chapter_search);
+        mSearchView = (SearchView) item.getActionView();
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(final String query) {
+                Intent intent = new Intent(getBaseContext(), SearchResultActivity.class);
+                intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, query);
+                intent.putStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
+                intent.putExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH, mNovelDirPath);
+                startActivity(intent);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        return true;
     }
 
     @Override

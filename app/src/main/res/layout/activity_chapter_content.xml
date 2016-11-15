@@ -10,6 +10,7 @@
     <include layout="@layout/toolbar"/>
 
     <ScrollView
+        android:id="@+id/sv_chapter_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -17,6 +18,7 @@
             android:id="@+id/tv_chapter_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="fill_horizontal"
             android:padding="@dimen/activity_vertical_margin"
             android:textSize="18sp"/>
     </ScrollView>
