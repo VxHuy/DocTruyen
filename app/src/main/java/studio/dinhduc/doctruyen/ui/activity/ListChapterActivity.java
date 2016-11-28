@@ -98,6 +98,18 @@ public class ListChapterActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // ddtran
+        mLvListChapter.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent(getBaseContext(), CheckSpelling.class);
+                intent.putExtra(Const.KeyIntent.KEY_CHAPTER_PATH,
+                        mNovelDirPath + File.separator + mChapterNames.get(position));
+                startActivity(intent);
+                return true;
+            }
+        });
     }
 
     @Override
