@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -98,18 +99,6 @@ public class ListChapterActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        // ddtran
-        mLvListChapter.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent(getBaseContext(), CheckSpelling.class);
-                intent.putExtra(Const.KeyIntent.KEY_CHAPTER_PATH,
-                        mNovelDirPath + File.separator + mChapterNames.get(position));
-                startActivity(intent);
-                return true;
-            }
-        });
     }
 
     @Override
@@ -120,12 +109,12 @@ public class ListChapterActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(final String query) {
+                Log.d(TAG, "onQueryTextSubmit: " + query);
                 Intent intent = new Intent(getBaseContext(), SearchResultActivity.class);
                 intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, query);
                 intent.putStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
                 intent.putExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH, mNovelDirPath);
                 startActivity(intent);
-
                 return false;
             }
 

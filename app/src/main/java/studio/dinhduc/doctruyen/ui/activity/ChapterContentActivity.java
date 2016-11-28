@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -12,7 +13,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import studio.dinhduc.doctruyen.R;
 import studio.dinhduc.doctruyen.ui.constant.Const;
+import studio.dinhduc.doctruyen.ui.custom.CheckSpellDialog;
 import studio.dinhduc.doctruyen.util.CommonUtils;
+import studio.dinhduc.doctruyen.util.RuleUtils;
 
 public class ChapterContentActivity extends AppCompatActivity {
 
@@ -21,6 +24,7 @@ public class ChapterContentActivity extends AppCompatActivity {
     @BindView(R.id.sv_chapter_content) ScrollView mSvContent;
     private String mChapterContent;
     private String mSearchQuery;
+    private CheckSpellDialog mCheckSpellDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +38,7 @@ public class ChapterContentActivity extends AppCompatActivity {
     private void initView() {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        RuleUtils.setUp();
         String chapterPath = getIntent().getStringExtra(Const.KeyIntent.KEY_CHAPTER_PATH);
         mSearchQuery = getIntent().getStringExtra(Const.KeyIntent.KEY_SEARCH_QUERY);
         mChapterContent = CommonUtils.readFileTxt(chapterPath);
@@ -45,6 +49,15 @@ public class ChapterContentActivity extends AppCompatActivity {
             content = CommonUtils.hiLightQueryInText(this, mSearchQuery, mChapterContent);
         }
         mTvContent.setText(Html.fromHtml(content));
+
+        mCheckSpellDialog = new CheckSpellDialog(ChapterContentActivity.this, mChapterContent)
+                .setTitle("Check Spell")
+                .setButtonCallback(new CheckSpellDialog.CloseCallback() {
+                    @Override
+                    public void onCloseButtonClick(CheckSpellDialog checkSpellDialog) {
+                        checkSpellDialog.cancel();
+                    }
+                });
     }
 
     private void getWidgetControl() {
@@ -65,9 +78,18 @@ public class ChapterContentActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == R.id.menu_chapter_content_check) {
+            mCheckSpellDialog.show();
+        } else if (item.getItemId() == android.R.id.home) {
             onBackPressed();
         }
         return true;
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_chapter_content, menu);
+        return true;
+    }
+
 }

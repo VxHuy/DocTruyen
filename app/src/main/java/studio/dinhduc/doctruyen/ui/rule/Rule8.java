@@ -1,4 +1,4 @@
-package studio.dinhduc.doctruyen.ui.Rule;
+package studio.dinhduc.doctruyen.ui.rule;
 
 /**
  * Created by duy on 11/11/2016.

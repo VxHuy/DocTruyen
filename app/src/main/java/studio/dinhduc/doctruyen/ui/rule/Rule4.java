@@ -1,14 +1,13 @@
-package studio.dinhduc.doctruyen.ui.Rule;
+package studio.dinhduc.doctruyen.ui.rule;
 
 /**
  * Created by duy on 07/11/2016.
  */
 
-/* từ không chứa nguyên âm -> sai chính tả */
-public class Rule2 implements Rule {
+/* một từ chỉ có tối đa 3 nguyên âm */
+public class Rule4 implements Rule {
     @Override
     public boolean checkInvalidate(String word) {
-
         String consonant = "qrtpsdghklxcvbnmđQRTPSDGHKLXCVBNMĐ";
         int count = 0;
         for (int i=0; i<word.length(); i++){
@@ -17,6 +16,6 @@ public class Rule2 implements Rule {
             }
         }
 
-        return count==word.length();
+        return count < (word.length()-3);
     }
 }

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,6 +20,7 @@ import studio.dinhduc.doctruyen.R;
  */
 
 public class CommonUtils {
+    private static final String TAG = "CommonUtils";
     private static final Pattern END_OF_SENTENCE = Pattern.compile("[.?\"!-]+[\\s]*");
 
     public static String readFileTxt(String filePath) {
@@ -69,6 +71,7 @@ public class CommonUtils {
                 ContextCompat.getColor(context, R.color.colorAccent) & 0x00ffffff);
         int index = text.toLowerCase().indexOf(query.toLowerCase());
         String queryInText = text.substring(index, index + query.length());
+        Log.d(TAG, queryInText);
         return text.replaceFirst(
                 queryInText,
                 "<b><font color=#" + accentColor + ">" + queryInText + "</font></b>"

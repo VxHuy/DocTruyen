@@ -3,4 +3,7 @@
     <string name="dialog_circle_loading_message">Đang tải dữ liệu. Đợi tí nhá...</string>
     <string name="dialog_progress_loading_message">Đang tìm trong các chương. Đợi tí nhá...</string>
     <string name="search">Search</string>
+    <string name="menu_check_word">Check Word</string>
+    <string name="check_spell_word_number">Số từ:</string>
+    <string name="all_close">CLOSE</string>
 </resources>
