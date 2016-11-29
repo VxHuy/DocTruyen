@@ -47,7 +47,7 @@ public class CheckSpellDialog {
             mThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    String content = mChapterContent.replace("<br>", "");
+                    String content = mChapterContent.replace("<br>", " ");
                     final String[] words = content.split("\\s+");
                     for (int i = 0; i < words.length; i++) {
                         String word = words[i];
@@ -79,8 +79,10 @@ public class CheckSpellDialog {
     private String deleteSign(String word) {
 
         String sign = "?.,;:\"!)";
-        if ((word.charAt(0) == '"') || (word.charAt(0) == '(')) {
-            word = word.substring(1);
+        if (word.length()>0) {
+            if ((word.charAt(0) == '"') || (word.charAt(0) == '(')) {
+                word = word.substring(1);
+            }
         }
         while ((word.length() > 0) && (sign.contains("" + word.charAt(word.length() - 1)))) {
             word = word.substring(0, word.length() - 1);
