@@ -6,4 +6,7 @@
     <string name="menu_check_word">Check Word</string>
     <string name="check_spell_word_number">Số từ:</string>
     <string name="all_close">CLOSE</string>
+    <string name="permission_denied">Permission is denied</string>
+    <string name="permission_required_message">Application need permission to excute this function</string>
+    <string name="permission_rationale">Application need permission to do this function. Do you want to permit?</string>
 </resources>

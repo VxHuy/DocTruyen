@@ -1,7 +1,9 @@
 package studio.dinhduc.doctruyen.ui.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,6 +19,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import studio.dinhduc.doctruyen.R;
 import studio.dinhduc.doctruyen.ui.constant.Const;
+import studio.dinhduc.doctruyen.util.PermissionUtils;
 
 public class MainActivity extends AppCompatActivity {
     ArrayList<String> mNovelNames = new ArrayList<>();
@@ -29,8 +32,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        initView();
-        getControlWidget();
+        PermissionUtils.requestPermission(this, 0, Manifest.permission.WRITE_EXTERNAL_STORAGE, false);
     }
 
     private void initView() {
@@ -60,4 +62,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 0) {
+            if (PermissionUtils.isPermissionGranted(
+                    permissions, grantResults, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                initView();
+                getControlWidget();
+            }
+        }
+    }
 }

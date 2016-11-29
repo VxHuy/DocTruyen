@@ -5,5 +5,5 @@ package studio.dinhduc.doctruyen.ui.rule;
  */
 public interface Rule {
 
-    public boolean checkInvalidate(String word);
+    boolean checkInvalidate(String word);
 }
