@@ -13,6 +13,9 @@ public class Sentence implements Comparable<Sentence> {
     private int startPosResult;
     private int maxLength;
 
+    public Sentence(int i) {
+        maxLength = 0;
+    }
 
     public Sentence(int lv, String content, int position) {
         this.lv = lv;
@@ -93,7 +96,7 @@ public class Sentence implements Comparable<Sentence> {
 
     @Override
     public int compareTo(Sentence comparesen) {
-        int comparelv=((Sentence)comparesen).getExpected();
-        return comparelv-this.getExpected();
+        int comparelv = ((Sentence) comparesen).getExpected();
+        return comparelv - this.getExpected();
     }
 }

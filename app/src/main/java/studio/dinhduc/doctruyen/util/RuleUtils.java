@@ -19,6 +19,7 @@ import studio.dinhduc.doctruyen.ui.rule.Rule2;
 import studio.dinhduc.doctruyen.ui.rule.Rule20;
 import studio.dinhduc.doctruyen.ui.rule.Rule21;
 import studio.dinhduc.doctruyen.ui.rule.Rule22;
+import studio.dinhduc.doctruyen.ui.rule.Rule23;
 import studio.dinhduc.doctruyen.ui.rule.Rule3;
 import studio.dinhduc.doctruyen.ui.rule.Rule4;
 import studio.dinhduc.doctruyen.ui.rule.Rule5;
@@ -59,6 +60,7 @@ public class RuleUtils {
         Rule rule20 = new Rule20();
         Rule rule21 = new Rule21();
         Rule rule22 = new Rule22();
+        Rule rule23 = new Rule23();
 
         mRules.add(rule0);
         mRules.add(rule1);
@@ -83,6 +85,7 @@ public class RuleUtils {
         mRules.add(rule20);
         mRules.add(rule21);
         mRules.add(rule22);
+        mRules.add(rule23);
     }
 
     // check word with all rules

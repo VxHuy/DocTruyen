@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -121,7 +120,7 @@ public class ChapterContentActivity extends AppCompatActivity {
     //vxhuy
     private void startSpeechToText() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "vi-VN");
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
@@ -144,16 +143,16 @@ public class ChapterContentActivity extends AppCompatActivity {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String text = result.get(0);
-                    if (text.equals(new String("quay lại")) || text.equals(new String("back"))) {
+                    if (text.equals("quay lại") || text.equals("back")) {
                         onBackPressed();
                     } else {
-                        if (text.equals(new String("đóng ứng dụng")) || text.equals(new String("exit"))) {
+                        if (text.equals("đóng ứng dụng") || text.equals("exit")) {
                             Intent startMain = new Intent(Intent.ACTION_MAIN);
                             startMain.addCategory(Intent.CATEGORY_HOME);
                             startActivity(startMain);
                             finish();
                         } else {
-                            if (text.equals(new String("trang chủ")) || text.equals(new String("home"))) {
+                            if (text.equals("trang chủ") || text.equals("home")) {
                                 Intent startMain = new Intent(this, MainActivity.class);
                                 startActivity(startMain);
                             }

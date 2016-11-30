@@ -15,9 +15,11 @@ public class Rule21 implements Rule {
     @Override
     public boolean checkInvalidate(String word) {
 
-        String double_vowels = "ai ao au âu ay ây eo êu ia iê yê iu oa oă" +
-                " oe oi ôi ơi oo ôô ua uă uâ ưa uê ui ưi uo uô uơ ươ ưu uy";
-        String three_vowels = "iêu yêu oai oao oay oeo uao uây uôi ươi ươu uya uyê uyu";
+        String[] double_vowels = {"ai", "ao", "au", "âu", "ay", "ây", "eo", "êu", "ia", "iê", "yê", "iu", "oa", "oă",
+                "oe", "oi", "ôi", "ơi", "oo", "ôô", "ua", "uă", "uâ", "ưa", "uê", "ui", "ưi", "uo",
+                "uô", "uơ", "ươ", "ưu", "uy"};
+        String[] three_vowels = {"iêu", "yêu", "oai", "oao", "oay", "oeo", "uao", "uây", "uôi", "ươi",
+                "ươu", "uya", "uyê", "uyu"};
         String[] vowels_not_end = {"â", "iê", "uâ", "uô", "ươ", "yê"};
         String[] vowels_end_consonant = {"ă", "oă", "oo", "ôô", "uă", "uyê"};
         String[] vowels_end = {"ai", "ao", "au", "âu", "ay", "ây", "eo", "êu", "ia", "iêu", "yêu", "iu", "oi", "ôi", "ơi", "oai",
@@ -41,13 +43,31 @@ public class Rule21 implements Rule {
         }
 
         // nguyen am doi
-        if ((vowels.length()==2)&&(!double_vowels.contains(vowels))){
-            return true;
+        if (vowels.length()==2){
+            boolean check=true;
+            for (String i:double_vowels){
+                if (i.equals(vowels)){
+                    check = false;
+                    break;
+                }
+            }
+            if (check){
+                return true;
+            }
         }
 
         // nguyen am ba
-        if ((vowels.length()==3)&&(!three_vowels.contains(vowels))){
-            return true;
+        if (vowels.length()==3){
+            boolean check = true;
+            for (String i:three_vowels){
+                if (i.equals(vowels)){
+                    check = false;
+                    break;
+                }
+            }
+            if (check) {
+                return true;
+            }
         }
 
         // nguyen am khong dung cuoi

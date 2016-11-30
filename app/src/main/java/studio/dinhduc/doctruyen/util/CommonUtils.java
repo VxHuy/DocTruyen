@@ -34,6 +34,7 @@ public class CommonUtils {
     private static ArrayList<Integer> ValueMax = new ArrayList<>();
     private static ArrayList<Integer> tmp_value = new ArrayList<>();
 
+
     public static String readFileTxt(String filePath) {
         StringBuilder text = new StringBuilder();
         File file = new File(filePath);
@@ -80,10 +81,7 @@ public class CommonUtils {
     public static String hiLightQueryInText(Context context, String query, String text) {
         String accentColor = Integer.toHexString(
                 ContextCompat.getColor(context, R.color.colorAccent) & 0x00ffffff);
-//        Log.e("HEXSTRING","query = "+query);
-//        Log.e("HEXSTRING","sentence" + text);
         int index = text.toLowerCase().indexOf(query.toLowerCase());
-//        Log.e("HEXSTRING","index = "+index);
         String queryInText = text.substring(index, index + query.length());
         return text.replaceFirst(
                 queryInText,
@@ -95,14 +93,50 @@ public class CommonUtils {
     public static String getSentence(String text, String word) {
         final String lcword = word.toLowerCase();
         for (String sentence : END_OF_SENTENCE.split(text)) {
-            if (sentence.toLowerCase().contains(lcword)) {
+            if (findFirstPos2(sentence, lcword) != -1) {
                 return sentence;
             }
         }
         return null;
     }
 
+    public static int findFirstPos2(String sen, String word) {
+        int result = sen.indexOf(word);
+        int tmp_length = sen.length();
+        if (result != -1 && tmp_length > result + word.length()) {
+            while ('a' <= sen.charAt(result + word.length()) && sen.charAt(result + word.length()) <= 'z') {
+                result = sen.indexOf(word, result + word.length());
+                if (result == -1 || tmp_length <= result + word.length()) break;
+            }
+        }
+        return result;
+    }
+
     //vxhuy
+    public static int findFirstPos(int i, String text, int start) {
+        int result = listText[i].indexOf(text, start);
+        int tmp_length = listText[i].length();
+        if (result != -1 && tmp_length > result + text.length()) {
+            while ('a' <= listText[i].charAt(result + text.length()) && listText[i].charAt(result + text.length()) <= 'z') {
+                result = listText[i].indexOf(text, result + text.length());
+                if (result == -1 || tmp_length <= result + text.length()) break;
+            }
+        }
+        return result;
+    }
+
+    public static int findLastPos(int i, String text) {
+        int result = listText[i].lastIndexOf(text);
+        int tmp_length = listText[i].length();
+        if (result > 0 && tmp_length > result + text.length()) {
+            while ('a' <= listText[i].charAt(result + text.length()) && listText[i].charAt(result + text.length()) <= 'z') {
+                result = listText[i].lastIndexOf(text, result - 1);
+                if (result == -1 || tmp_length <= result + text.length()) break;
+            }
+        }
+        return result;
+    }
+
     public static SearchResult getSentenceMultilSearch(String chapterContent, String searchQuery) {
         String chapterContent1 = chapterContent.replaceAll("<br>", " ");
         lcSearchQuery = searchQuery.toLowerCase();
@@ -117,28 +151,24 @@ public class CommonUtils {
         listText = END_OF_SENTENCE.split(chapterContent1.toLowerCase());
         int tmp[] = new int[100];
         listSentence = new ArrayList<>();
-        int count;
-        int z = 0;
-        //duyệt cả chapter 1 lần và lưu lại các trạng thái của từng sentance
-//        Log.e("DUYET", "listText.length= " + listText.length);
         for (int i = 0; i < listText.length; i++) {
-            z++;
+//            Log.e("TEST","============cau " +z +" =============");
             Sentence st = new Sentence(0, listText[i].toLowerCase(), i);
             int lv = 0;
             for (int j = 0; j < listWord.size(); j++) {
-                int pos_tmp = listText[i].indexOf(listWord.get(j).getContent());
-                int last_pos_tmp = listText[i].lastIndexOf(listWord.get(j).getContent());
-                if (pos_tmp > -1) {
+                int pos_tmp = findFirstPos(i, listWord.get(j).getContent(), 0);
+                int last_pos_tmp = findLastPos(i, listWord.get(j).getContent());
+                if (pos_tmp > -1 && listText[i].charAt(pos_tmp) != ' ') {
+
                     Word w = new Word(listWord.get(j));
                     SameWord sameWord = new SameWord();
                     w.setPosInSentence(pos_tmp);
                     w.setPosInQuery(j);
-//                    Log.e("DUYET", "word = " + w.getContent());
                     sameWord.setWord(w);
                     sameWord.getPosSameWord().add(pos_tmp);
                     if (pos_tmp < last_pos_tmp) {
                         while (pos_tmp < last_pos_tmp) {
-                            pos_tmp = listText[i].indexOf(listWord.get(j).getContent(), pos_tmp + listWord.get(j).getContent().length());
+                            pos_tmp = findFirstPos(i, listWord.get(j).getContent(), pos_tmp + listWord.get(j).getContent().length());
                             if (pos_tmp < last_pos_tmp) {
                                 sameWord.getPosSameWord().add(pos_tmp);
                             }
@@ -200,43 +230,41 @@ public class CommonUtils {
             Collections.sort(listSentence);
             // Tìm chuỗi con dài nhất trong  các câu
             int ResultMaxLength = 1;
-            Sentence senMax = listSentence.get(0);
-
-            int l = 0;
+            Sentence senMax = new Sentence(0);
             for (Sentence sen : listSentence) {
-                l++;
-                if (sen.getLv() == 1) {
-                    continue;
-                } else {
-                    if (sen.getExpected() >= 2) {
-                        ValueMax.add(sen.getStartPosResult());
-                        tmp_value.add(sen.getStartPosResult());
-                        for (int i = 0; i < sen.getHasWord().get(sen.getStartPosResult()).getPosSameWord().size(); i++) {
-                            TRY(sen.getHasWord().get(sen.getStartPosResult()).getPosSameWord().get(i), sen.getStartPosResult() + 1, sen);
-                            if (sen.getMaxLength() == sen.getExpected()) break;
-                        }
-                        String str = "";
-                        for (int x : ValueMax) {
-                            str += sen.getHasWord().get(x).getWord().getContent() + " ";
-                        }
-                        if (str.length() > 1)
-                            str = str.substring(0, str.length() - 1);
-                        if (ResultMaxLength < ValueMax.size()) {
-                            ResultMaxLength = ValueMax.size();
-                            senMax = sen;
-                        }
-                        sen.setMaxLength(ValueMax.size());
-                        sen.setSubResult(str);
-                        if (sen.getMaxLength() == sen.getExpected()) {
-
-                            ValueMax.clear();
-                            tmp_value.clear();
-                            break;
-                        }
+                if (sen.getExpected() >= 2) {
+                    ValueMax.add(sen.getStartPosResult());
+                    tmp_value.add(sen.getStartPosResult());
+                    for (int i = 0; i < sen.getHasWord().get(sen.getStartPosResult()).getPosSameWord().size(); i++) {
+                        TRY(sen.getHasWord().get(sen.getStartPosResult()).getPosSameWord().get(i), sen.getStartPosResult() + 1, sen);
+                        if (sen.getMaxLength() == sen.getExpected()) break;
+                    }
+                    if (ResultMaxLength < ValueMax.size()) {
+                        ResultMaxLength = ValueMax.size();
+                        senMax = sen;
                     } else {
+                        ValueMax.clear();
+                        tmp_value.clear();
                         continue;
                     }
+                    String str = "";
+                    for (int x : ValueMax) {
+                        str += sen.getHasWord().get(x).getWord().getContent() + " ";
+                    }
+                    if (str.length() > 1)
+                        str = str.substring(0, str.length() - 1);
+                    sen.setMaxLength(ValueMax.size());
+                    sen.setSubResult(str);
+                    if (sen.getMaxLength() == sen.getExpected()) {
+                        ValueMax.clear();
+                        tmp_value.clear();
+                        break;
+                    }
+                } else {
+
+                    continue;
                 }
+//                }
                 ValueMax.clear();
                 tmp_value.clear();
             }
@@ -259,16 +287,19 @@ public class CommonUtils {
         for (int i = 0; i < sen.getHasWord().get(k).getPosSameWord().size(); i++) {
             ArrayList<Integer> tmp_value2 = new ArrayList<>();
             int tmp = sen.getHasWord().get(k).getPosSameWord().get(i) - (value_previous + sen.getHasWord().get(k - 1).getWord().getLength());
-            if (tmp <= 2 && tmp >= 0) {
+            if (tmp <= 2 && tmp > 0) {
                 tmp_value.add(k);
+//                Log.e("Di1", " k =" + k + " i = " + i +" word = " +sen.getHasWord().get(k).getWord().getContent()+" pos = "+sen.getHasWord().get(k).getPosSameWord().get(i)+" tmp_value.size = " + tmp_value.size() + " ValueMax.size = " + ValueMax.size()+" tmp_value = "+tmp_value.toString());
             } else {
                 if (tmp_value.size() > ValueMax.size()) {
                     ValueMax.clear();
                     ValueMax.addAll(tmp_value);
-
+//                    Log.e("Di2", " k =" + k + " i = " + i +" word = " +sen.getHasWord().get(k).getWord().getContent()+ " pos = "+sen.getHasWord().get(k).getPosSameWord().get(i)+" tmp_value.size = " + tmp_value.size() + " ValueMax.size = " + ValueMax.size()+" tmp_value = "+tmp_value.toString());
                 }
                 tmp_value2.addAll(tmp_value);
+//                Log.e("Di3", " k =" + k + " i = " + i +" word = " +sen.getHasWord().get(k).getWord().getContent()+" pos = "+sen.getHasWord().get(k).getPosSameWord().get(i)+" tmp_value.size = " + tmp_value.size() + " ValueMax.size = " + ValueMax.size()+" tmp_value = "+tmp_value.toString());
                 tmp_value.clear();
+                tmp_value.add(k);
             }
             if (k - sen.getStartPosResult() == sen.getExpected() || k == sen.getHasWord().size() - 1) {
                 if (tmp_value.size() > ValueMax.size()) {
@@ -279,15 +310,18 @@ public class CommonUtils {
                     return;
                 }
             } else {
-                TRY(sen.getHasWord().get(k).getWord().getPosInSentence(), k + 1, sen);
+                TRY(sen.getHasWord().get(k).getPosSameWord().get(i), k + 1, sen); //////////////////
                 if (ValueMax.size() == sen.getExpected()) return;
             }
-            if (tmp <= 2 && tmp >= 0) {
+            if (tmp <= 2 && tmp > 0) {
                 tmp_value.remove(tmp_value.size() - 1);
             } else {
                 tmp_value.clear();
                 tmp_value.addAll(tmp_value2);
                 tmp_value2.clear();
+                if(tmp_value.size()>=1&&tmp_value.get(tmp_value.size()-1).equals(sen.getHasWord().get(k).getWord().getContent())){
+                    tmp_value.remove(tmp_value.size()-1);
+                }
             }
         }
     }
