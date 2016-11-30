@@ -103,7 +103,7 @@ public class CommonUtils {
     }
 
     //vxhuy
-    public SearchResult getSentenceMultilSearch(String chapterContent, String searchQuery) {
+    public static SearchResult getSentenceMultilSearch(String chapterContent, String searchQuery) {
         String chapterContent1 = chapterContent.replaceAll("<br>", " ");
         lcSearchQuery = searchQuery.toLowerCase();
         arrWord = lcSearchQuery.toLowerCase().split(" ");
@@ -254,7 +254,7 @@ public class CommonUtils {
         return null;
     }
 
-    private void TRY(int value_previous, int k, Sentence sen) {
+    private static void TRY(int value_previous, int k, Sentence sen) {
         if (ValueMax.size() == sen.getExpected()) return;
         for (int i = 0; i < sen.getHasWord().get(k).getPosSameWord().size(); i++) {
             ArrayList<Integer> tmp_value2 = new ArrayList<>();

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_mic_control"
-        android:icon="@android:drawable/btn_minus"
+        android:icon="@drawable/ic_keyboard_voice_white_24dp"
         android:title="Speech control"
         app:showAsAction="ifRoom"/>
 </menu>

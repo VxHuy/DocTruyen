@@ -38,9 +38,8 @@ public class CheckSpellDialog {
     private String[] mWords;
     private CheckSpellTask mTask;
 
-    public CheckSpellDialog(Activity activity, String content) {
+    public CheckSpellDialog(Activity activity) {
         mActivity = activity;
-        mChapterContent = content;
         initView();
     }
 
@@ -91,10 +90,15 @@ public class CheckSpellDialog {
         mAlertDialog.show();
         if (mTask == null || mTask.isCancelled()) {
             mListErrorWords.clear();
+            mCount = 0;
             mTask = new CheckSpellTask();
             mTask.execute(mChapterContent);
         }
         return this;
+    }
+
+    public void setChapterContent(String chapterContent) {
+        mChapterContent = chapterContent;
     }
 
     public void cancel() {
@@ -122,6 +126,13 @@ public class CheckSpellDialog {
                 if (word.length() > 0 && RuleUtils.check(word)) {
                     ++mCount;
                     mListErrorWords.add(word);
+                    mActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTvCheckWordNumber.setText(String.valueOf(mCount));
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    });
                 }
             }
             return null;
@@ -135,13 +146,6 @@ public class CheckSpellDialog {
             mPbCheckProgress.setProgress(progress);
         }
 
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            mTvCheckWordNumber.setText(String.valueOf(mCount));
-            mAdapter.notifyDataSetChanged();
-
-        }
     }
 
 }

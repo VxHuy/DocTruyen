@@ -41,6 +41,7 @@ public class ListChapterActivity extends AppCompatActivity {
     private ArrayAdapter<String> mAdapter;
     private String mNovelDirPath;
     private SearchView mSearchView;
+    private String mNovelName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +55,11 @@ public class ListChapterActivity extends AppCompatActivity {
     private void initView() {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        String novelName = getIntent().getStringExtra(Const.KeyIntent.KEY_NOVEL_NAME);
-        getSupportActionBar().setTitle(novelName);
+        mNovelName = getIntent().getStringExtra(Const.KeyIntent.KEY_NOVEL_NAME);
+        getSupportActionBar().setTitle(mNovelName);
 
-        mNovelDirPath = getIntent().getStringExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH);
+        mNovelDirPath = Const.APP_DIR_PATH + File.separator + mNovelName;
+
         File novelDir = new File(mNovelDirPath);
 
         ArrayList<File> chapters = new ArrayList<>(Arrays.asList(novelDir.listFiles()));
@@ -101,9 +103,9 @@ public class ListChapterActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Intent intent = new Intent(getBaseContext(), ChapterContentActivity.class);
-                intent.putExtra(Const.KeyIntent.KEY_CHAPTER_PATH,
-                        mNovelDirPath + File.separator + mChapterNames.get(position));
-                intent.putExtra(Const.KeyIntent.KEY_CHAPTER_NAME, mChapterNames.get(position));
+                intent.putExtra(Const.KeyIntent.KEY_NOVEL_PATH, mNovelDirPath);
+                intent.putExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
+                intent.putExtra(Const.KeyIntent.KEY_CHAPTER_CHOSEN_POSITION, position);
                 startActivity(intent);
             }
         });
@@ -118,12 +120,8 @@ public class ListChapterActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(final String query) {
                 Log.d(TAG, "onQueryTextSubmit: " + query);
-                Intent intent = new Intent(getBaseContext(), SearchResultActivity.class);
-                intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, query);
-                intent.putStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
-                intent.putExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH, mNovelDirPath);
-                startActivity(intent);
-                return false;
+                startSearch(query);
+                return true;
             }
 
             @Override
@@ -137,14 +135,18 @@ public class ListChapterActivity extends AppCompatActivity {
     //vxhuy
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home: onBackPressed();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
                 return true;
-            case R.id.menu_mic_search: startSpeechToText();
+            case R.id.menu_mic_search:
+                startSpeechToText();
                 return true;
-            default: return true;
+            default:
+                return true;
         }
     }
+
     //vxhuy
     private void startSpeechToText() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -161,6 +163,15 @@ public class ListChapterActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
+
+    private void startSearch(String query) {
+        Intent intent = new Intent(getBaseContext(), SearchResultActivity.class);
+        intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, query);
+        intent.putStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
+        intent.putExtra(Const.KeyIntent.KEY_NOVEL_PATH, mNovelDirPath);
+        startActivity(intent);
+    }
+
     //vxhuy
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -172,25 +183,21 @@ public class ListChapterActivity extends AppCompatActivity {
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String text = result.get(0);
                     Log.d(TAG, "onActivityResult: " + text);
-                    if(text.equals(new String("quay lại")) ||text.equals(new String("back"))){
+                    if (text.equals("quay lại") || text.equals("back")) {
                         onBackPressed();
-                    }else{
-                        if (text.equals(new String("đóng ứng dụng")) ||text.equals(new String("exit"))){
+                    } else {
+                        if (text.equals("thoát") || text.equals("exit")) {
                             Intent startMain = new Intent(Intent.ACTION_MAIN);
                             startMain.addCategory(Intent.CATEGORY_HOME);
                             startActivity(startMain);
                             finish();
-                        }else{
-                            if (text.equals(new String("trang chủ")) ||text.equals(new String("home"))){
-                                Intent startMain = new Intent(this,MainActivity.class);
+                        } else {
+                            if (text.equals("trang chủ") || text.equals("home")) {
+                                Intent startMain = new Intent(this, MainActivity.class);
                                 startActivity(startMain);
 
-                            }else{
-                                Intent intent = new Intent(getBaseContext(), SearchResultActivity.class);
-                                intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, text);
-                                intent.putStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
-                                intent.putExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH, mNovelDirPath);
-                                startActivity(intent);
+                            } else {
+                                startSearch(text);
                             }
                         }
                     }

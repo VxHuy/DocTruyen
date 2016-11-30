@@ -8,6 +8,7 @@ import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,7 @@ import studio.dinhduc.doctruyen.ui.constant.Const;
 import studio.dinhduc.doctruyen.util.PermissionUtils;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     ArrayList<String> mNovelNames = new ArrayList<>();
     ArrayAdapter<String> mAdapter;
     @BindView(R.id.tool_bar) Toolbar mToolBar;
@@ -60,9 +62,7 @@ public class MainActivity extends AppCompatActivity {
         mLvListNovel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String novelDirPath = Const.APP_DIR_PATH + File.separator + mNovelNames.get(position);
                 Intent intent = new Intent(getBaseContext(), ListChapterActivity.class);
-                intent.putExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH, novelDirPath);
                 intent.putExtra(Const.KeyIntent.KEY_NOVEL_NAME, mNovelNames.get(position));
                 startActivity(intent);
             }
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     //vxhuy
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_speech_control, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String text = result.get(0);
+                    Log.d(TAG, "onActivityResult: " + text);
 
                     if (text.equals(new String("đóng ứng dụng")) ||text.equals(new String("exit"))){
                         Intent startMain = new Intent(Intent.ACTION_MAIN);

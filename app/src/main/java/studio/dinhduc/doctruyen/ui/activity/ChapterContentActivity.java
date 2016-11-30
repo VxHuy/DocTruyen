@@ -7,18 +7,18 @@ import android.speech.RecognizerIntent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import studio.dinhduc.doctruyen.R;
+import studio.dinhduc.doctruyen.ui.adapter.ChapterContentAdapter;
 import studio.dinhduc.doctruyen.ui.constant.Const;
 import studio.dinhduc.doctruyen.ui.custom.CheckSpellDialog;
 import studio.dinhduc.doctruyen.util.CommonUtils;
@@ -26,13 +26,13 @@ import studio.dinhduc.doctruyen.util.RuleUtils;
 
 public class ChapterContentActivity extends AppCompatActivity {
 
-    @BindView(R.id.tv_chapter_content) TextView mTvContent;
     @BindView(R.id.tool_bar) Toolbar mToolBar;
-    @BindView(R.id.sv_chapter_content) ScrollView mSvContent;
     @BindView(R.id.vpg_chapter_content) ViewPager mVpgChapterContent;
-    private String mChapterContent;
     private String mSearchQuery;
     private CheckSpellDialog mCheckSpellDialog;
+    private ChapterContentAdapter mChapterContentAdapter;
+    private ArrayList<String> mChapterNames;
+    private String mNovelPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,22 +46,21 @@ public class ChapterContentActivity extends AppCompatActivity {
     private void initView() {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        String chapterName = getIntent().getStringExtra(Const.KeyIntent.KEY_CHAPTER_NAME);
-        getSupportActionBar().setTitle(chapterName);
         RuleUtils.setUp();
-        String chapterPath = getIntent().getStringExtra(Const.KeyIntent.KEY_CHAPTER_PATH);
-        mSearchQuery = getIntent().getStringExtra(Const.KeyIntent.KEY_SEARCH_QUERY);
-        mChapterContent = CommonUtils.readFileTxt(chapterPath);
-        String content;
+        Intent intent = getIntent();
+        mNovelPath = intent.getStringExtra(Const.KeyIntent.KEY_NOVEL_PATH);
+        mChapterNames = intent.getStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME);
+        mSearchQuery = intent.getStringExtra(Const.KeyIntent.KEY_SEARCH_QUERY);
+        int chapterChosenPosition = intent.getIntExtra(Const.KeyIntent.KEY_CHAPTER_CHOSEN_POSITION, 0);
+        String chapterName = mChapterNames.get(chapterChosenPosition);
+        getSupportActionBar().setTitle(chapterName);
+        mChapterContentAdapter = new ChapterContentAdapter(this, mChapterNames, mNovelPath);
+        mChapterContentAdapter.hightLight(mSearchQuery, chapterChosenPosition);
+        mVpgChapterContent.setAdapter(mChapterContentAdapter);
+        mVpgChapterContent.setCurrentItem(chapterChosenPosition);
 
-        if (mSearchQuery == null) {
-            content = mChapterContent;
-        } else {
-            content = CommonUtils.hiLightQueryInText(this, mSearchQuery, mChapterContent);
-        }
-        mTvContent.setText(Html.fromHtml(content));
 
-        mCheckSpellDialog = new CheckSpellDialog(ChapterContentActivity.this, mChapterContent)
+        mCheckSpellDialog = new CheckSpellDialog(ChapterContentActivity.this)
                 .setTitle("Check Spell")
                 .setButtonCallback(new CheckSpellDialog.CloseCallback() {
                     @Override
@@ -69,39 +68,52 @@ public class ChapterContentActivity extends AppCompatActivity {
                         checkSpellDialog.cancel();
                     }
                 });
+
     }
 
     private void getWidgetControl() {
-        if (mSearchQuery != null) {
-            mSvContent.post(new Runnable() {
-                @Override
-                public void run() {
-                    int offset = mChapterContent.toLowerCase().indexOf(mSearchQuery.toLowerCase());
-                    // get line number from index
-                    int line = mTvContent.getLayout().getLineForOffset(offset);
-                    // get coordinateY in textview
-                    int coordinateY = mTvContent.getLayout().getLineTop(line);
-                    mSvContent.scrollTo(0, coordinateY - 100);
-                }
-            });
-        }
+        mVpgChapterContent.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                String chapterName = mChapterNames.get(position);
+                getSupportActionBar().setTitle(chapterName);
+                String chapterContent = CommonUtils.readFileTxt(mNovelPath + File.separator + chapterName);
+                mCheckSpellDialog.setChapterContent(chapterContent);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_chapter_content, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_chapter_content_check) {
-            mCheckSpellDialog.show();
-        } else if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
-        }
-        switch (item.getItemId()){
-            case android.R.id.home: onBackPressed();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                onBackPressed();
                 return true;
-            case R.id.menu_mic_control: startSpeechToText();
+            case R.id.menu_mic_control:
+                startSpeechToText();
                 return true;
-            case R.id.menu_chapter_content_check:  mCheckSpellDialog.show();
+            case R.id.menu_chapter_content_check:
+                mCheckSpellDialog.show();
                 return true;
-            default: return true;
+            default:
+                return true;
         }
 
     }
@@ -132,9 +144,9 @@ public class ChapterContentActivity extends AppCompatActivity {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String text = result.get(0);
-                    if(text.equals(new String("quay lại")) ||text.equals(new String("back"))){
+                    if (text.equals(new String("quay lại")) || text.equals(new String("back"))) {
                         onBackPressed();
-                    }else {
+                    } else {
                         if (text.equals(new String("đóng ứng dụng")) || text.equals(new String("exit"))) {
                             Intent startMain = new Intent(Intent.ACTION_MAIN);
                             startMain.addCategory(Intent.CATEGORY_HOME);
@@ -142,7 +154,7 @@ public class ChapterContentActivity extends AppCompatActivity {
                             finish();
                         } else {
                             if (text.equals(new String("trang chủ")) || text.equals(new String("home"))) {
-                                Intent startMain = new Intent(this,MainActivity.class);
+                                Intent startMain = new Intent(this, MainActivity.class);
                                 startActivity(startMain);
                             }
                         }

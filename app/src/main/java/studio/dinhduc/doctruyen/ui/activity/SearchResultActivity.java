@@ -57,7 +57,7 @@ public class SearchResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mSearchQuery = intent.getStringExtra(Const.KeyIntent.KEY_SEARCH_QUERY);
         mChapterNames = intent.getStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME);
-        mNovelDirPath = intent.getStringExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH);
+        mNovelDirPath = intent.getStringExtra(Const.KeyIntent.KEY_NOVEL_PATH);
         final ProgressDialog dialog = CommonUtils.showProgressLoadingDialog(this);
         new Thread(new Runnable() {
             @Override
@@ -72,8 +72,7 @@ public class SearchResultActivity extends AppCompatActivity {
 
                     try {
                         if (mSearchQuery.contains(" ")) {
-                            CommonUtils cm = new CommonUtils();
-                            SearchResult sr = cm.getSentenceMultilSearch(chapterContent, mSearchQuery);
+                            SearchResult sr = CommonUtils.getSentenceMultilSearch(chapterContent, mSearchQuery);
                             if (sr != null) {
                                 sr.setSentence(sr.getSentence().replaceAll("<br>", ""));
                                 String highlightSentence = CommonUtils.hiLightQueryInText(
@@ -119,12 +118,11 @@ public class SearchResultActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 Intent intent = new Intent(getBaseContext(), ChapterContentActivity.class);
-                intent.putExtra(
-                        Const.KeyIntent.KEY_CHAPTER_PATH,
-                        mNovelDirPath + File.separator + mSearchResults.get(position).getChapterName()
-                );
-                intent.putExtra(Const.KeyIntent.KEY_CHAPTER_NAME, mSearchResults.get(position).getChapterName());
-                intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, mSearchQuery);
+                intent.putExtra(Const.KeyIntent.KEY_NOVEL_PATH, mNovelDirPath);
+                intent.putExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
+                intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, mSearchResults.get(position).getSearchQuery());
+                intent.putExtra(Const.KeyIntent.KEY_CHAPTER_CHOSEN_POSITION,
+                        mChapterNames.indexOf(mSearchResults.get(position).getChapterName()));
                 startActivity(intent);
             }
         });
@@ -141,7 +139,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 Intent intent = new Intent(getBaseContext(), SearchResultActivity.class);
                 intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, query);
                 intent.putStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
-                intent.putExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH, mNovelDirPath);
+                intent.putExtra(Const.KeyIntent.KEY_NOVEL_PATH, mNovelDirPath);
                 startActivity(intent);
                 return false;
             }
@@ -210,7 +208,7 @@ public class SearchResultActivity extends AppCompatActivity {
                                 Intent intent = new Intent(getBaseContext(), SearchResultActivity.class);
                                 intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, text);
                                 intent.putStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
-                                intent.putExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH, mNovelDirPath);
+                                intent.putExtra(Const.KeyIntent.KEY_NOVEL_PATH, mNovelDirPath);
                                 startActivity(intent);
                             }
                         }
