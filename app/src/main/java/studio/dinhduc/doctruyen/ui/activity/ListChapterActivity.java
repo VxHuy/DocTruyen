@@ -54,6 +54,8 @@ public class ListChapterActivity extends AppCompatActivity {
     private void initView() {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        String novelName = getIntent().getStringExtra(Const.KeyIntent.KEY_NOVEL_NAME);
+        getSupportActionBar().setTitle(novelName);
 
         mNovelDirPath = getIntent().getStringExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH);
         File novelDir = new File(mNovelDirPath);
@@ -101,6 +103,7 @@ public class ListChapterActivity extends AppCompatActivity {
                 Intent intent = new Intent(getBaseContext(), ChapterContentActivity.class);
                 intent.putExtra(Const.KeyIntent.KEY_CHAPTER_PATH,
                         mNovelDirPath + File.separator + mChapterNames.get(position));
+                intent.putExtra(Const.KeyIntent.KEY_CHAPTER_NAME, mChapterNames.get(position));
                 startActivity(intent);
             }
         });

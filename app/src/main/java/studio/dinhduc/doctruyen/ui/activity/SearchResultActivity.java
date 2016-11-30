@@ -123,6 +123,7 @@ public class SearchResultActivity extends AppCompatActivity {
                         Const.KeyIntent.KEY_CHAPTER_PATH,
                         mNovelDirPath + File.separator + mSearchResults.get(position).getChapterName()
                 );
+                intent.putExtra(Const.KeyIntent.KEY_CHAPTER_NAME, mSearchResults.get(position).getChapterName());
                 intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, mSearchQuery);
                 startActivity(intent);
             }

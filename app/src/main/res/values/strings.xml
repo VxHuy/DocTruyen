@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DocTruyen</string>
+    <string name="app_name">Doc Truyen</string>
     <string name="dialog_circle_loading_message">Đang tải dữ liệu. Đợi tí nhá...</string>
     <string name="dialog_progress_loading_message">Đang tìm trong các chương. Đợi tí nhá...</string>
     <string name="search">Search</string>

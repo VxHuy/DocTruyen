@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                 String novelDirPath = Const.APP_DIR_PATH + File.separator + mNovelNames.get(position);
                 Intent intent = new Intent(getBaseContext(), ListChapterActivity.class);
                 intent.putExtra(Const.KeyIntent.KEY_NOVEL_DIR_PATH, novelDirPath);
+                intent.putExtra(Const.KeyIntent.KEY_NOVEL_NAME, mNovelNames.get(position));
                 startActivity(intent);
             }
         });

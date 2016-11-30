@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -28,6 +29,7 @@ public class ChapterContentActivity extends AppCompatActivity {
     @BindView(R.id.tv_chapter_content) TextView mTvContent;
     @BindView(R.id.tool_bar) Toolbar mToolBar;
     @BindView(R.id.sv_chapter_content) ScrollView mSvContent;
+    @BindView(R.id.vpg_chapter_content) ViewPager mVpgChapterContent;
     private String mChapterContent;
     private String mSearchQuery;
     private CheckSpellDialog mCheckSpellDialog;
@@ -44,11 +46,14 @@ public class ChapterContentActivity extends AppCompatActivity {
     private void initView() {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        String chapterName = getIntent().getStringExtra(Const.KeyIntent.KEY_CHAPTER_NAME);
+        getSupportActionBar().setTitle(chapterName);
         RuleUtils.setUp();
         String chapterPath = getIntent().getStringExtra(Const.KeyIntent.KEY_CHAPTER_PATH);
         mSearchQuery = getIntent().getStringExtra(Const.KeyIntent.KEY_SEARCH_QUERY);
         mChapterContent = CommonUtils.readFileTxt(chapterPath);
         String content;
+
         if (mSearchQuery == null) {
             content = mChapterContent;
         } else {
