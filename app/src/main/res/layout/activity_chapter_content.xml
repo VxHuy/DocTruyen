@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="studio.dinhduc.doctruyen.ui.activity.ChapterContentActivity">
+    tools:activity="studio.dinhduc.doctruyen.ui.activity.ChapterContentActivity">
 
     <include layout="@layout/toolbar"/>
 

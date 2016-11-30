@@ -26,6 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import studio.dinhduc.doctruyen.R;
 import studio.dinhduc.doctruyen.ui.constant.Const;
+import studio.dinhduc.doctruyen.ui.custom.GotoDialog;
 import studio.dinhduc.doctruyen.util.PermissionUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     //vxhuy
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -77,14 +79,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home: onBackPressed();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
                 return true;
-            case R.id.menu_mic_control: startSpeechToText();
+            case R.id.menu_mic_control:
+                startSpeechToText();
                 return true;
-            default: return true;
+            case R.id.menu_go_to:
+                showGoToDialog();
+                return true;
+            default:
+                return true;
         }
     }
+
+    private void showGoToDialog() {
+        new GotoDialog(this).setTitle("Go To").show();
+    }
+
     private void startSpeechToText() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
@@ -112,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                     String text = result.get(0);
                     Log.d(TAG, "onActivityResult: " + text);
 
-                    if (text.equals(new String("đóng ứng dụng")) ||text.equals(new String("exit"))){
+                    if (text.equals(new String("đóng ứng dụng")) || text.equals(new String("exit"))) {
                         Intent startMain = new Intent(Intent.ACTION_MAIN);
                         startMain.addCategory(Intent.CATEGORY_HOME);
                         startActivity(startMain);
