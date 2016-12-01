@@ -28,6 +28,7 @@ public class GotoDialog {
     @BindView(R.id.spn_goto_novel) Spinner mSpnGotoNovel;
     @BindView(R.id.spn_goto_chapter) Spinner mSpnGotoChapter;
     @BindView(R.id.tv_go_to) TextView mTvGoto;
+    @BindView(R.id.tv_close) TextView mTvClose;
     private Activity mActivity;
     private AlertDialog mAlertDialog;
     private ArrayList<String> mChapterNames;
@@ -88,6 +89,13 @@ public class GotoDialog {
                 cancel();
             }
         });
+        mTvClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cancel();
+            }
+        });
+
     }
 
     public GotoDialog setTitle(String title) {

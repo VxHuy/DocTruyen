@@ -40,6 +40,7 @@ public class ChapterContentAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.item_chapter_content, null);
+        view.setTag(position);
         final TextView mTvChapterContent = (TextView) view.findViewById(R.id.tv_chapter_content);
         final ScrollView mSvChapterContent = (ScrollView) view.findViewById(R.id.sv_chapter_content);
         String chapterPath = mNovelPath + File.separator + mChapterNames.get(position);
@@ -47,7 +48,7 @@ public class ChapterContentAdapter extends PagerAdapter {
         final String content;
 
         if (mSearchQuery != null && position == mChapterChosenPosition) {
-            content = CommonUtils.hiLightQueryInText(mContext, mSearchQuery, chapterContent);
+            content = CommonUtils.highLightQueryInText(mContext, mSearchQuery, chapterContent);
             mTvChapterContent.setText(Html.fromHtml(content));
 
             mSvChapterContent.post(new Runnable() {
@@ -58,7 +59,7 @@ public class ChapterContentAdapter extends PagerAdapter {
                     int line = mTvChapterContent.getLayout().getLineForOffset(offset);
                     // get coordinateY in textview
                     int coordinateY = mTvChapterContent.getLayout().getLineTop(line);
-                    mSvChapterContent.scrollTo(0, coordinateY);
+                    mSvChapterContent.scrollTo(0, coordinateY - 400);
                 }
             });
         } else {

@@ -1,20 +1,15 @@
 package studio.dinhduc.doctruyen.ui.activity;
 
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,7 +69,7 @@ public class SearchResultActivity extends AppCompatActivity {
                             SearchResult sr = CommonUtils.getSentenceMultilSearch(chapterContent, mSearchQuery);
                             if (sr != null) {
                                 sr.setSentence(sr.getSentence().replaceAll("<br>", ""));
-                                String highlightSentence = CommonUtils.hiLightQueryInText(
+                                String highlightSentence = CommonUtils.highLightQueryInText(
                                         getBaseContext(), sr.getSearchQuery(), sr.getSentence());
                                 sr.setChapterName(chapterName);
                                 sr.setResultContent(highlightSentence);
@@ -84,7 +79,7 @@ public class SearchResultActivity extends AppCompatActivity {
                             String sentence = CommonUtils.getSentence(chapterContent, mSearchQuery); //trả lại câu có chứa cụm từ/từ cần tìm trong chương
                             if (sentence != null) {
                                 sentence = sentence.replaceAll("<br>", "");
-                                String highlightSentence = CommonUtils.hiLightQueryInText(
+                                String highlightSentence = CommonUtils.highLightQueryInText(
                                         getBaseContext(), mSearchQuery, sentence);
                                 SearchResult searchResult = new SearchResult();
                                 searchResult.setChapterName(chapterName);
@@ -128,93 +123,14 @@ public class SearchResultActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_list_chapter, menu);
-        MenuItem item = menu.findItem(R.id.menu_list_chapter_search);
-        SearchView mSearchView = (SearchView) item.getActionView();
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(final String query) {
-                Intent intent = new Intent(getBaseContext(), SearchResultActivity.class);
-                intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, query);
-                intent.putStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
-                intent.putExtra(Const.KeyIntent.KEY_NOVEL_PATH, mNovelDirPath);
-                startActivity(intent);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                return true;
-            case R.id.menu_mic_control:
-                startSpeechToText();
                 return true;
             default:
                 return true;
         }
     }
 
-    //vxhuy
-    private void startSpeechToText() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "vi-VN");
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                "Speak something...");
-        try {
-            startActivityForResult(intent, 1);
-        } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    "Sorry! Speech recognition is not supported in this device.",
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case 1: {
-                if (resultCode == RESULT_OK && null != data) {
-                    ArrayList<String> result = data
-                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    String text = result.get(0);
-                    if (text.equals(new String("quay lại")) || text.equals(new String("back"))) {
-                        onBackPressed();
-                    } else {
-                        if (text.equals(new String("đóng ứng dụng")) || text.equals(new String("exit"))) {
-                            Intent startMain = new Intent(Intent.ACTION_MAIN);
-                            startMain.addCategory(Intent.CATEGORY_HOME);
-                            startActivity(startMain);
-                            finish();
-                        } else {
-                            if (text.equals(new String("trang chủ")) || text.equals(new String("home"))) {
-                                Intent startMain = new Intent(this, MainActivity.class);
-                                startActivity(startMain);
-                            } else {
-                                Intent intent = new Intent(getBaseContext(), SearchResultActivity.class);
-                                intent.putExtra(Const.KeyIntent.KEY_SEARCH_QUERY, text);
-                                intent.putStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
-                                intent.putExtra(Const.KeyIntent.KEY_NOVEL_PATH, mNovelDirPath);
-                                startActivity(intent);
-                            }
-                        }
-                    }
-                }
-                break;
-            }
-        }
-    }
 }

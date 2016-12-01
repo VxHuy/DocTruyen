@@ -7,8 +7,10 @@ import android.speech.RecognizerIntent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -32,6 +34,7 @@ public class ChapterContentActivity extends AppCompatActivity {
     private ChapterContentAdapter mChapterContentAdapter;
     private ArrayList<String> mChapterNames;
     private String mNovelPath;
+    private String mChapterContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +64,29 @@ public class ChapterContentActivity extends AppCompatActivity {
 
         mCheckSpellDialog = new CheckSpellDialog(ChapterContentActivity.this)
                 .setTitle("Check Spell")
-                .setButtonCallback(new CheckSpellDialog.CloseCallback() {
+                .setButtonCallback(new CheckSpellDialog.ButtonCallback() {
                     @Override
                     public void onCloseButtonClick(CheckSpellDialog checkSpellDialog) {
                         checkSpellDialog.cancel();
                     }
-                });
 
+                    @Override
+                    public void onHighlightButtonClick(CheckSpellDialog checkSpellDialog, ArrayList<String> listErrors) {
+                        checkSpellDialog.cancel();
+                        String chapterContent = mChapterContent;
+                        try {
+                            TextView textView = (TextView) mVpgChapterContent.findViewWithTag(mVpgChapterContent.getCurrentItem()).findViewById(R.id.tv_chapter_content);
+                            for (String error : listErrors) {
+                                chapterContent = CommonUtils.highLightInText(getBaseContext(), error, chapterContent);
+                                textView.setText(Html.fromHtml(chapterContent));
+                            }
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+        mChapterContent = CommonUtils.readFileTxt(mNovelPath + File.separator + chapterName);
+        mCheckSpellDialog.setChapterContent(mChapterContent);
     }
 
     private void getWidgetControl() {
@@ -81,8 +100,8 @@ public class ChapterContentActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 String chapterName = mChapterNames.get(position);
                 getSupportActionBar().setTitle(chapterName);
-                String chapterContent = CommonUtils.readFileTxt(mNovelPath + File.separator + chapterName);
-                mCheckSpellDialog.setChapterContent(chapterContent);
+                mChapterContent = CommonUtils.readFileTxt(mNovelPath + File.separator + chapterName);
+                mCheckSpellDialog.setChapterContent(mChapterContent);
             }
 
             @Override

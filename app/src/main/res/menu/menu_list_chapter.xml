@@ -3,14 +3,16 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu_mic_search"
-        android:icon="@drawable/ic_keyboard_voice_white_24dp"
-        android:title="Speech To Text"
-        app:showAsAction="ifRoom"/>
-    <item
         android:id="@+id/menu_list_chapter_search"
         android:icon="@drawable/ic_search_white_24dp"
         android:title="@string/search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/menu_mic_search"
+        android:icon="@drawable/ic_keyboard_voice_white_24dp"
+        android:title="Speech To Text"
+        app:showAsAction="ifRoom"/>
+
 </menu>

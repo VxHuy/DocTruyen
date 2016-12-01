@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -59,17 +58,15 @@ public class ListChapterActivity extends AppCompatActivity {
 
         mNovelDirPath = Const.APP_DIR_PATH + File.separator + mNovelName;
 
-        File novelDir = new File(mNovelDirPath);
-
-        ArrayList<File> chapters = new ArrayList<>(Arrays.asList(novelDir.listFiles()));
-        for (File chapter : chapters) {
-            mChapterNames.add(chapter.getName());
-        }
-
         final Dialog dialog = CommonUtils.showCircleLoadingDialog(this);
         new Thread(new Runnable() {
             @Override
             public void run() {
+                File novelDir = new File(mNovelDirPath);
+                File[] chapters = novelDir.listFiles();
+                for (File chapter : chapters) {
+                    mChapterNames.add(chapter.getName());
+                }
                 Collections.sort(mChapterNames, new Comparator<String>() {
                     @Override
                     public int compare(String s1, String s2) {
@@ -120,6 +117,7 @@ public class ListChapterActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(final String query) {
                 Log.d(TAG, "onQueryTextSubmit: " + query);
                 startSearch(query);
+                mSearchView.clearFocus();
                 return true;
             }
 

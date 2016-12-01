@@ -28,15 +28,17 @@ public class CheckSpellDialog {
     @BindView(R.id.tv_check_word_number) TextView mTvCheckWordNumber;
     @BindView(R.id.lv_check_list_word) ListView mLvCheckListWord;
     @BindView(R.id.tv_check_close) TextView mTvCheckClose;
+    @BindView(R.id.tv_check_high_light) TextView mTvCheckHighLight;
     private Activity mActivity;
     private AlertDialog mAlertDialog;
-    private CloseCallback mCallback;
+    private ButtonCallback mCallback;
     private ArrayList<String> mListErrorWords = new ArrayList<>();
     private String mChapterContent;
     private ArrayAdapter<String> mAdapter;
     private int mCount = 0;
-    private String[] mWords;
     private CheckSpellTask mTask;
+    private boolean mIsRunning;
+    private boolean mIsContentChange;
 
     public CheckSpellDialog(Activity activity) {
         mActivity = activity;
@@ -71,6 +73,12 @@ public class CheckSpellDialog {
                 mCallback.onCloseButtonClick(CheckSpellDialog.this);
             }
         });
+        mTvCheckHighLight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCallback.onHighlightButtonClick(CheckSpellDialog.this, mListErrorWords);
+            }
+        });
         mAdapter = new ArrayAdapter<>(
                 mActivity, android.R.layout.simple_list_item_1, mListErrorWords);
         mLvCheckListWord.setAdapter(mAdapter);
@@ -81,16 +89,18 @@ public class CheckSpellDialog {
         return this;
     }
 
-    public CheckSpellDialog setButtonCallback(CloseCallback callback) {
+    public CheckSpellDialog setButtonCallback(ButtonCallback callback) {
         mCallback = callback;
         return this;
     }
 
     public CheckSpellDialog show() {
         mAlertDialog.show();
-        if (mTask == null || mTask.isCancelled()) {
+        if (mTask == null || mTask.isCancelled() || mIsContentChange) {
             mListErrorWords.clear();
             mCount = 0;
+            mTvCheckWordNumber.setText(String.valueOf(mCount));
+            mPbCheckProgress.setProgress(0);
             mTask = new CheckSpellTask();
             mTask.execute(mChapterContent);
         }
@@ -99,21 +109,28 @@ public class CheckSpellDialog {
 
     public void setChapterContent(String chapterContent) {
         mChapterContent = chapterContent;
+        mIsContentChange = true;
     }
 
     public void cancel() {
-        mTask.cancel(true);
+        if (mIsRunning) {
+            mTask.cancel(true);
+        }
         mAlertDialog.cancel();
     }
 
-    public interface CloseCallback {
+    public interface ButtonCallback {
         void onCloseButtonClick(CheckSpellDialog checkSpellDialog);
+
+        void onHighlightButtonClick(CheckSpellDialog checkSpellDialog, ArrayList<String> listErrors);
     }
 
     private class CheckSpellTask extends AsyncTask<String, Integer, String> {
+        private String[] mWords;
 
         @Override
         protected String doInBackground(String... strings) {
+            mIsRunning = true;
             String content = strings[0].replace("<br>", " ");
             mWords = content.split("\\s+");
             for (int i = 0; i < mWords.length; i++) {
@@ -125,16 +142,19 @@ public class CheckSpellDialog {
                 word = deleteSign(word);
                 if (word.length() > 0 && RuleUtils.check(word)) {
                     ++mCount;
-                    mListErrorWords.add(word);
+                    final String finalWord = word;
                     mActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            mListErrorWords.add(finalWord);
                             mTvCheckWordNumber.setText(String.valueOf(mCount));
                             mAdapter.notifyDataSetChanged();
                         }
                     });
                 }
             }
+            mIsRunning = false;
+            mIsContentChange = false;
             return null;
         }
 

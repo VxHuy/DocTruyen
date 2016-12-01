@@ -78,7 +78,7 @@ public class CommonUtils {
         return dialog;
     }
 
-    public static String hiLightQueryInText(Context context, String query, String text) {
+    public static String highLightQueryInText(Context context, String query, String text) {
         String accentColor = Integer.toHexString(
                 ContextCompat.getColor(context, R.color.colorAccent) & 0x00ffffff);
         int index = text.toLowerCase().indexOf(query.toLowerCase());
@@ -87,6 +87,34 @@ public class CommonUtils {
                 queryInText,
                 "<b><font color=#" + accentColor + ">" + queryInText + "</font></b>"
         );
+    }
+
+    public static String highLightInText(Context context, String query, String text) {
+        String accentColor = Integer.toHexString(
+                ContextCompat.getColor(context, R.color.colorAccent) & 0x00ffffff);
+        int index = text.indexOf(query);
+//        String beforeChar = "";
+//        String afterChar = "";
+//        if (index - 1 >= 0) {
+//            beforeChar = String.valueOf(text.charAt(index - 1));
+//
+//        }
+//        if (index + 1 <= text.length()) {
+//            afterChar = String.valueOf(text.charAt(index + 1));
+//        }
+//        String invalid_string = " 0123456789fjwzFJWZ!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+        try {
+//            if (invalid_string.contains(beforeChar) && invalid_string.contains(afterChar)) {
+                return text.replace(
+                        query,
+                        "<b><font color=#" + accentColor + ">" + query + "</font></b>"
+                );
+//            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return text;
+        }
+
     }
 
     @Nullable
@@ -319,8 +347,8 @@ public class CommonUtils {
                 tmp_value.clear();
                 tmp_value.addAll(tmp_value2);
                 tmp_value2.clear();
-                if(tmp_value.size()>=1&&tmp_value.get(tmp_value.size()-1).equals(sen.getHasWord().get(k).getWord().getContent())){
-                    tmp_value.remove(tmp_value.size()-1);
+                if (tmp_value.size() >= 1 && tmp_value.get(tmp_value.size() - 1).equals(sen.getHasWord().get(k).getWord().getContent())) {
+                    tmp_value.remove(tmp_value.size() - 1);
                 }
             }
         }
