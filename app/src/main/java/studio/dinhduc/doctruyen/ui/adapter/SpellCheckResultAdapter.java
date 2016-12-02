@@ -15,53 +15,52 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import studio.dinhduc.doctruyen.R;
-import studio.dinhduc.doctruyen.model.SearchResult;
+import studio.dinhduc.doctruyen.model.SpellCheckResult;
 
 /**
- * Created by dinhduc on 14/11/2016.
+ * Created by dinhduc on 02/12/2016.
  */
 
-public class SearchResultAdapter extends ArrayAdapter<SearchResult> {
+public class SpellCheckResultAdapter extends ArrayAdapter<SpellCheckResult> {
     private Context mContext;
-    private ArrayList<SearchResult> mSearchResults;
+    private ArrayList<SpellCheckResult> mSpellCheckResults;
     private int mLayoutId;
 
-    public SearchResultAdapter(Context context, int resource, List<SearchResult> objects) {
+    public SpellCheckResultAdapter(Context context, int resource, List<SpellCheckResult> objects) {
         super(context, resource, objects);
         mContext = context;
-        mSearchResults = new ArrayList<>(objects);
+        mSpellCheckResults = new ArrayList<>(objects);
         mLayoutId = resource;
     }
 
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        SearchResultViewHolder viewHolder;
+        SpellCheckViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(mLayoutId, parent, false);
-            viewHolder = new SearchResultViewHolder(convertView);
+            viewHolder = new SpellCheckViewHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (SearchResultViewHolder) convertView.getTag();
+            viewHolder = (SpellCheckViewHolder) convertView.getTag();
         }
-        viewHolder.bindData(mSearchResults.get(position));
+        viewHolder.bindData(mSpellCheckResults.get(position));
         return convertView;
     }
 
-    class SearchResultViewHolder {
+    class SpellCheckViewHolder {
         @BindView(R.id.tv_result_name)
         TextView mTvChapterName;
         @BindView(R.id.tv_result_content)
         TextView mTvResultContent;
 
-        public SearchResultViewHolder(View view) {
+        public SpellCheckViewHolder(View view) {
             ButterKnife.bind(this, view);
         }
 
-        private void bindData(SearchResult searchResult) {
-            mTvChapterName.setText(searchResult.getChapterName());
-            mTvResultContent.setText(Html.fromHtml(searchResult.getResultContent()));
+        private void bindData(SpellCheckResult spellCheckResult) {
+            mTvChapterName.setText(spellCheckResult.getChapterName());
+            mTvResultContent.setText(Html.fromHtml(spellCheckResult.getLine()));
         }
     }
-
 }

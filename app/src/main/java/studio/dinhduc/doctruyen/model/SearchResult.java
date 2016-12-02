@@ -7,9 +7,9 @@ package studio.dinhduc.doctruyen.model;
 public class SearchResult implements Comparable<SearchResult> {
     private String mChapterName;
     private String mResultContent;
-    private int mLvResult;
     private String sentence;
     private String searchQuery;
+    private int mLvResult;
 
     public int getLvResult() {
         return mLvResult;
@@ -53,8 +53,8 @@ public class SearchResult implements Comparable<SearchResult> {
 
     @Override
     public int compareTo(SearchResult searchResult) {
-        int comparelv=((SearchResult)searchResult).getLvResult();
-        return comparelv-this.getLvResult();
+        int comparelv = ((SearchResult) searchResult).getLvResult();
+        return comparelv - this.getLvResult();
     }
 }
 

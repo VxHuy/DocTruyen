@@ -78,43 +78,17 @@ public class CommonUtils {
         return dialog;
     }
 
-    public static String highLightQueryInText(Context context, String query, String text) {
+    public static String highLightQueryInText(Context context, String query, String text, boolean caseSensitive) {
         String accentColor = Integer.toHexString(
                 ContextCompat.getColor(context, R.color.colorAccent) & 0x00ffffff);
-        int index = text.toLowerCase().indexOf(query.toLowerCase());
-        String queryInText = text.substring(index, index + query.length());
-        return text.replaceFirst(
-                queryInText,
-                "<b><font color=#" + accentColor + ">" + queryInText + "</font></b>"
-        );
-    }
-
-    public static String highLightInText(Context context, String query, String text) {
-        String accentColor = Integer.toHexString(
-                ContextCompat.getColor(context, R.color.colorAccent) & 0x00ffffff);
-        int index = text.indexOf(query);
-//        String beforeChar = "";
-//        String afterChar = "";
-//        if (index - 1 >= 0) {
-//            beforeChar = String.valueOf(text.charAt(index - 1));
-//
-//        }
-//        if (index + 1 <= text.length()) {
-//            afterChar = String.valueOf(text.charAt(index + 1));
-//        }
-//        String invalid_string = " 0123456789fjwzFJWZ!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
-        try {
-//            if (invalid_string.contains(beforeChar) && invalid_string.contains(afterChar)) {
-                return text.replace(
-                        query,
-                        "<b><font color=#" + accentColor + ">" + query + "</font></b>"
-                );
-//            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return text;
+        if (caseSensitive) {
+            int index = text.toLowerCase().indexOf(query.toLowerCase());
+            query = text.substring(index, index + query.length());
         }
-
+        return text.replace(
+                query,
+                "<b><font color=#" + accentColor + ">" + query + "</font></b>"
+        );
     }
 
     @Nullable

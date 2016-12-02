@@ -40,6 +40,7 @@ public class ListChapterActivity extends AppCompatActivity {
     private String mNovelDirPath;
     private SearchView mSearchView;
     private String mNovelName;
+    private ArrayList<String> mListChapterContent = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,8 @@ public class ListChapterActivity extends AppCompatActivity {
                 File novelDir = new File(mNovelDirPath);
                 File[] chapters = novelDir.listFiles();
                 for (File chapter : chapters) {
+                    String chapterPath = mNovelDirPath + File.separator + chapter.getName();
+                    mListChapterContent.add(CommonUtils.readFileTxt(chapterPath));
                     mChapterNames.add(chapter.getName());
                 }
                 Collections.sort(mChapterNames, new Comparator<String>() {
@@ -139,10 +142,21 @@ public class ListChapterActivity extends AppCompatActivity {
             case R.id.menu_mic_search:
                 startSpeechToText();
                 return true;
+            case R.id.menu_novel_check:
+                startSpellCheckActivity();
+
             default:
                 return true;
         }
     }
+
+    private void startSpellCheckActivity() {
+        Intent intent = new Intent(this, SpellCheckResultActivity.class);
+        intent.putExtra(Const.KeyIntent.KEY_NOVEL_PATH, mNovelDirPath);
+        intent.putExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME, mChapterNames);
+        startActivity(intent);
+    }
+
 
     //vxhuy
     private void startSpeechToText() {

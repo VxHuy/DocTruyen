@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import studio.dinhduc.doctruyen.R;
+import studio.dinhduc.doctruyen.ui.activity.ChapterContentActivity;
 import studio.dinhduc.doctruyen.util.CommonUtils;
 
 /**
@@ -48,13 +49,22 @@ public class ChapterContentAdapter extends PagerAdapter {
         final String content;
 
         if (mSearchQuery != null && position == mChapterChosenPosition) {
-            content = CommonUtils.highLightQueryInText(mContext, mSearchQuery, chapterContent);
+            if (ChapterContentActivity.fromSpellCheck) {
+                content = CommonUtils.highLightQueryInText(mContext, mSearchQuery, chapterContent, false);
+            } else {
+                content = CommonUtils.highLightQueryInText(mContext, mSearchQuery, chapterContent, true);
+            }
             mTvChapterContent.setText(Html.fromHtml(content));
 
             mSvChapterContent.post(new Runnable() {
                 @Override
                 public void run() {
-                    int offset = content.toLowerCase().indexOf(mSearchQuery.toLowerCase());
+                    int offset;
+                    if (!ChapterContentActivity.fromSpellCheck) {
+                        offset = content.toLowerCase().indexOf(mSearchQuery.toLowerCase());
+                    } else {
+                        offset = content.indexOf(mSearchQuery);
+                    }
                     // get line number from index
                     int line = mTvChapterContent.getLayout().getLineForOffset(offset);
                     // get coordinateY in textview

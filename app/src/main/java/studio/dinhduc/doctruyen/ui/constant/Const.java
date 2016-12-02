@@ -21,5 +21,6 @@ public class Const {
         public static final String KEY_SEARCH_QUERY = "SEARCH_QUERY";
         public static final String KEY_LIST_CHAPTER_NAME = "LIST_CHAPTER_NAME";
         public static final String KEY_CHAPTER_CHOSEN_POSITION = "CHAPTER_CHOSEN_POSITION";
+        public static final String KEY_SPELL_CHECK = "SPELL_CHECK";
     }
 }

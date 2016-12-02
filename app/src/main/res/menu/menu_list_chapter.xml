@@ -14,5 +14,10 @@
         android:icon="@drawable/ic_keyboard_voice_white_24dp"
         android:title="Speech To Text"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_novel_check"
+        android:icon="@drawable/ic_spellcheck_white_24dp"
+        android:title="@string/menu_check_word"
+        app:showAsAction="ifRoom"/>
 
 </menu>

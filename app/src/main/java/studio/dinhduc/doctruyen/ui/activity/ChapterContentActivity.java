@@ -7,10 +7,8 @@ import android.speech.RecognizerIntent;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -21,7 +19,6 @@ import butterknife.ButterKnife;
 import studio.dinhduc.doctruyen.R;
 import studio.dinhduc.doctruyen.ui.adapter.ChapterContentAdapter;
 import studio.dinhduc.doctruyen.ui.constant.Const;
-import studio.dinhduc.doctruyen.ui.custom.CheckSpellDialog;
 import studio.dinhduc.doctruyen.util.CommonUtils;
 import studio.dinhduc.doctruyen.util.RuleUtils;
 
@@ -30,11 +27,11 @@ public class ChapterContentActivity extends AppCompatActivity {
     @BindView(R.id.tool_bar) Toolbar mToolBar;
     @BindView(R.id.vpg_chapter_content) ViewPager mVpgChapterContent;
     private String mSearchQuery;
-    private CheckSpellDialog mCheckSpellDialog;
     private ChapterContentAdapter mChapterContentAdapter;
     private ArrayList<String> mChapterNames;
     private String mNovelPath;
     private String mChapterContent;
+    public static boolean fromSpellCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +51,7 @@ public class ChapterContentActivity extends AppCompatActivity {
         mChapterNames = intent.getStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME);
         mSearchQuery = intent.getStringExtra(Const.KeyIntent.KEY_SEARCH_QUERY);
         int chapterChosenPosition = intent.getIntExtra(Const.KeyIntent.KEY_CHAPTER_CHOSEN_POSITION, 0);
+        fromSpellCheck = intent.getBooleanExtra(Const.KeyIntent.KEY_SPELL_CHECK, false);
         String chapterName = mChapterNames.get(chapterChosenPosition);
         getSupportActionBar().setTitle(chapterName);
         mChapterContentAdapter = new ChapterContentAdapter(this, mChapterNames, mNovelPath);
@@ -62,31 +60,7 @@ public class ChapterContentActivity extends AppCompatActivity {
         mVpgChapterContent.setCurrentItem(chapterChosenPosition);
 
 
-        mCheckSpellDialog = new CheckSpellDialog(ChapterContentActivity.this)
-                .setTitle("Check Spell")
-                .setButtonCallback(new CheckSpellDialog.ButtonCallback() {
-                    @Override
-                    public void onCloseButtonClick(CheckSpellDialog checkSpellDialog) {
-                        checkSpellDialog.cancel();
-                    }
-
-                    @Override
-                    public void onHighlightButtonClick(CheckSpellDialog checkSpellDialog, ArrayList<String> listErrors) {
-                        checkSpellDialog.cancel();
-                        String chapterContent = mChapterContent;
-                        try {
-                            TextView textView = (TextView) mVpgChapterContent.findViewWithTag(mVpgChapterContent.getCurrentItem()).findViewById(R.id.tv_chapter_content);
-                            for (String error : listErrors) {
-                                chapterContent = CommonUtils.highLightInText(getBaseContext(), error, chapterContent);
-                                textView.setText(Html.fromHtml(chapterContent));
-                            }
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
         mChapterContent = CommonUtils.readFileTxt(mNovelPath + File.separator + chapterName);
-        mCheckSpellDialog.setChapterContent(mChapterContent);
     }
 
     private void getWidgetControl() {
@@ -101,7 +75,6 @@ public class ChapterContentActivity extends AppCompatActivity {
                 String chapterName = mChapterNames.get(position);
                 getSupportActionBar().setTitle(chapterName);
                 mChapterContent = CommonUtils.readFileTxt(mNovelPath + File.separator + chapterName);
-                mCheckSpellDialog.setChapterContent(mChapterContent);
             }
 
             @Override
@@ -122,13 +95,9 @@ public class ChapterContentActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
-                onBackPressed();
                 return true;
             case R.id.menu_mic_control:
                 startSpeechToText();
-                return true;
-            case R.id.menu_chapter_content_check:
-                mCheckSpellDialog.show();
                 return true;
             default:
                 return true;

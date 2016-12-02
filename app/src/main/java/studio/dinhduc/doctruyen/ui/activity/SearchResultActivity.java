@@ -58,7 +58,7 @@ public class SearchResultActivity extends AppCompatActivity {
             public void run() {
                 for (int i = 0; i < mChapterNames.size(); i++) {
                     int progress = ((int) ((float) i / mChapterNames.size() * 100));
-                    Log.d(TAG, "run: " + progress);
+//                    Log.d(TAG, "run: " + progress);
                     dialog.setProgress(progress);
                     String chapterName = mChapterNames.get(i);
                     String chapterPath = mNovelDirPath + File.separator + chapterName;
@@ -70,7 +70,7 @@ public class SearchResultActivity extends AppCompatActivity {
                             if (sr != null) {
                                 sr.setSentence(sr.getSentence().replaceAll("<br>", ""));
                                 String highlightSentence = CommonUtils.highLightQueryInText(
-                                        getBaseContext(), sr.getSearchQuery(), sr.getSentence());
+                                        getBaseContext(), sr.getSearchQuery(), sr.getSentence(), true);
                                 sr.setChapterName(chapterName);
                                 sr.setResultContent(highlightSentence);
                                 mSearchResults.add(sr);
@@ -80,7 +80,7 @@ public class SearchResultActivity extends AppCompatActivity {
                             if (sentence != null) {
                                 sentence = sentence.replaceAll("<br>", "");
                                 String highlightSentence = CommonUtils.highLightQueryInText(
-                                        getBaseContext(), mSearchQuery, sentence);
+                                        getBaseContext(), mSearchQuery, sentence, true);
                                 SearchResult searchResult = new SearchResult();
                                 searchResult.setChapterName(chapterName);
                                 searchResult.setResultContent(highlightSentence);
@@ -99,7 +99,7 @@ public class SearchResultActivity extends AppCompatActivity {
                         dialog.dismiss();
                         Collections.sort(mSearchResults);
                         mAdapter = new SearchResultAdapter(
-                                getBaseContext(), R.layout.item_search_result, mSearchResults);
+                                getBaseContext(), R.layout.item_result, mSearchResults);
                         mLvSearchResult.setAdapter(mAdapter);
                     }
                 });
