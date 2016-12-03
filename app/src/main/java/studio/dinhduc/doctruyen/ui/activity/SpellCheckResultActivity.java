@@ -98,17 +98,17 @@ public class SpellCheckResultActivity extends AppCompatActivity {
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
 //                                Log.d(TAG, line);
+                            line = deleteSign(line);
                             final String[] mWords = line.split("\\s+");
 //                                Log.d(TAG, "run: ");
                             for (String mWord : mWords) {
-                                String word = mWord;
-                                word = deleteSign(word);
-                                if (!mDictionary.contains(word) && RuleUtils.check(word) && !word.equals("")) {
-                                    Log.d(TAG, "test: " + "-" + word + "-");
+
+                                if (!mDictionary.contains(mWord) && RuleUtils.check(mWord) && !mWord.equals("")) {
+                                    Log.d(TAG, "test: " + "-" + mWord + "-");
                                     SpellCheckResult result = new SpellCheckResult();
-                                    result.setWord(word);
+                                    result.setWord(mWord);
                                     result.setChapterName(mChapterNames.get(i));
-                                    result.setLine(CommonUtils.highLightQueryInText(getBaseContext(), word, line, false));
+                                    result.setLine(CommonUtils.highLightQueryInText(getBaseContext(), mWord, line, false));
                                     mSpellCheckResults.add(result);
                                     count++;
                                 }
@@ -133,18 +133,10 @@ public class SpellCheckResultActivity extends AppCompatActivity {
     }
 
     // delete sign: ? : ! ...
-    private String deleteSign(String word) {
+    private String deleteSign(String words) {
 
-        String sign = "?.,;:\"!)";
-        if (word.length() > 0) {
-            if ((word.charAt(0) == '"') || (word.charAt(0) == '(')) {
-                word = word.substring(1);
-            }
-        }
-        while ((word.length() > 0) && (sign.contains("" + word.charAt(word.length() - 1)))) {
-            word = word.substring(0, word.length() - 1);
-        }
-        return word;
+        words = words.replaceAll("[?.,:;\"!()-]", " ");
+        return words;
     }
 
     @Override
