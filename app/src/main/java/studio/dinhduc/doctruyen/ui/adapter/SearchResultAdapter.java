@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import studio.dinhduc.doctruyen.R;
 import studio.dinhduc.doctruyen.model.SearchResult;
+import studio.dinhduc.doctruyen.util.CommonUtils;
 
 /**
  * Created by dinhduc on 14/11/2016.
@@ -29,7 +30,7 @@ public class SearchResultAdapter extends ArrayAdapter<SearchResult> {
     public SearchResultAdapter(Context context, int resource, List<SearchResult> objects) {
         super(context, resource, objects);
         mContext = context;
-        mSearchResults = new ArrayList<>(objects);
+        mSearchResults = (ArrayList<SearchResult>) objects;
         mLayoutId = resource;
     }
 
@@ -48,6 +49,11 @@ public class SearchResultAdapter extends ArrayAdapter<SearchResult> {
         return convertView;
     }
 
+    @Override
+    public int getCount() {
+        return mSearchResults.size();
+    }
+
     class SearchResultViewHolder {
         @BindView(R.id.tv_result_name)
         TextView mTvChapterName;
@@ -59,8 +65,11 @@ public class SearchResultAdapter extends ArrayAdapter<SearchResult> {
         }
 
         private void bindData(SearchResult searchResult) {
+            String chapterContent = searchResult.getResultContent();
+            chapterContent = CommonUtils.highLightQueryInText(
+                    mContext, searchResult.getSearchQuery(), chapterContent);
             mTvChapterName.setText(searchResult.getChapterName());
-            mTvResultContent.setText(Html.fromHtml(searchResult.getResultContent()));
+            mTvResultContent.setText(Html.fromHtml(chapterContent));
         }
     }
 

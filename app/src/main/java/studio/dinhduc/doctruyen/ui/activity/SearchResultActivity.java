@@ -1,6 +1,5 @@
 package studio.dinhduc.doctruyen.ui.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,10 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,18 +27,22 @@ public class SearchResultActivity extends AppCompatActivity {
     private static final String TAG = "SearchResultActivity";
 
     @BindView(R.id.tool_bar) Toolbar mToolBar;
-    @BindView(R.id.lv_search_result) ListView mLvSearchResult;
+    @BindView(R.id.lv_result) ListView mLvSearchResult;
+    @BindView(R.id.tv_result_chapter_count) TextView mTvResultChapterCount;
+    @BindView(R.id.pb_result_progress) ProgressBar mPbResultProgress;
+    @BindView(R.id.tv_result_count) TextView mTvResultCount;
 
     private ArrayList<SearchResult> mSearchResults = new ArrayList<>();
     private SearchResultAdapter mAdapter;
     private String mNovelDirPath;
     private ArrayList<String> mChapterNames;
     private String mSearchQuery;
+    private int mCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_result);
+        setContentView(R.layout.activity_result);
         ButterKnife.bind(this);
         initView();
         getWidgetControl();
@@ -48,61 +52,69 @@ public class SearchResultActivity extends AppCompatActivity {
         setSupportActionBar(mToolBar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         mSearchQuery = intent.getStringExtra(Const.KeyIntent.KEY_SEARCH_QUERY);
         mChapterNames = intent.getStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME);
         mNovelDirPath = intent.getStringExtra(Const.KeyIntent.KEY_NOVEL_PATH);
-        final ProgressDialog dialog = CommonUtils.showProgressLoadingDialog(this);
+        mAdapter = new SearchResultAdapter(
+                getBaseContext(), R.layout.item_result, mSearchResults);
+        mLvSearchResult.setAdapter(mAdapter);
+        mPbResultProgress.setMax(mChapterNames.size());
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < mChapterNames.size(); i++) {
-                    int progress = ((int) ((float) i / mChapterNames.size() * 100));
+                final int chapterSize = mChapterNames.size();
+                for (int i = 0; i < chapterSize; i++) {
+                    final int finalI1 = i;
 //                    Log.d(TAG, "run: " + progress);
-                    dialog.setProgress(progress);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mPbResultProgress.setProgress(finalI1 + 1);
+                            mTvResultChapterCount.setText("Chương: " + (finalI1 + 1) + "/" + chapterSize);
+                        }
+                    });
                     String chapterName = mChapterNames.get(i);
                     String chapterPath = mNovelDirPath + File.separator + chapterName;
                     String chapterContent = CommonUtils.readFileTxt(chapterPath); //trả lại 1 content of chapter
-
+                    SearchResult searchResult = null;
                     try {
                         if (mSearchQuery.contains(" ")) {
-                            SearchResult sr = CommonUtils.getSentenceMultilSearch(chapterContent, mSearchQuery);
-                            if (sr != null) {
-                                sr.setSentence(sr.getSentence().replaceAll("<br>", ""));
-                                String highlightSentence = CommonUtils.highLightQueryInText(
-                                        getBaseContext(), sr.getSearchQuery(), sr.getSentence(), true);
-                                sr.setChapterName(chapterName);
-                                sr.setResultContent(highlightSentence);
-                                mSearchResults.add(sr);
+                            searchResult = CommonUtils.getSentenceMultilSearch(chapterContent, mSearchQuery);
+                            if (searchResult != null) {
+                                searchResult.setSentence(searchResult.getSentence().replaceAll("<br>", ""));
+                                searchResult.setChapterName(chapterName);
+                                searchResult.setResultContent(searchResult.getSentence());
+                                mCount++;
                             }
                         } else {
                             String sentence = CommonUtils.getSentence(chapterContent, mSearchQuery); //trả lại câu có chứa cụm từ/từ cần tìm trong chương
                             if (sentence != null) {
                                 sentence = sentence.replaceAll("<br>", "");
-                                String highlightSentence = CommonUtils.highLightQueryInText(
-                                        getBaseContext(), mSearchQuery, sentence, true);
-                                SearchResult searchResult = new SearchResult();
+                                searchResult = new SearchResult();
                                 searchResult.setChapterName(chapterName);
-                                searchResult.setResultContent(highlightSentence);
+                                searchResult.setResultContent(sentence);
                                 searchResult.setSearchQuery(mSearchQuery);
-                                mSearchResults.add(searchResult);
+                                mCount++;
                             }
                         }
+                        final SearchResult finalSearchResult = searchResult;
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                if (finalSearchResult != null) {
+                                    mSearchResults.add(finalSearchResult);
+                                    mAdapter.notifyDataSetChanged();
+                                    mTvResultCount.setText("Số từ: " + mCount);
+                                }
+                            }
+                        });
                     } catch (Exception e) {
                         Log.e("LOG", e.toString());
                     }
                 }
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        dialog.dismiss();
-                        Collections.sort(mSearchResults);
-                        mAdapter = new SearchResultAdapter(
-                                getBaseContext(), R.layout.item_result, mSearchResults);
-                        mLvSearchResult.setAdapter(mAdapter);
-                    }
-                });
             }
         }).start();
     }

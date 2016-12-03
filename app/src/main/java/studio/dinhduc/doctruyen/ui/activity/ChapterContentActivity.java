@@ -31,7 +31,6 @@ public class ChapterContentActivity extends AppCompatActivity {
     private ArrayList<String> mChapterNames;
     private String mNovelPath;
     private String mChapterContent;
-    public static boolean fromSpellCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +50,6 @@ public class ChapterContentActivity extends AppCompatActivity {
         mChapterNames = intent.getStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME);
         mSearchQuery = intent.getStringExtra(Const.KeyIntent.KEY_SEARCH_QUERY);
         int chapterChosenPosition = intent.getIntExtra(Const.KeyIntent.KEY_CHAPTER_CHOSEN_POSITION, 0);
-        fromSpellCheck = intent.getBooleanExtra(Const.KeyIntent.KEY_SPELL_CHECK, false);
         String chapterName = mChapterNames.get(chapterChosenPosition);
         getSupportActionBar().setTitle(chapterName);
         mChapterContentAdapter = new ChapterContentAdapter(this, mChapterNames, mNovelPath);
@@ -133,24 +131,24 @@ public class ChapterContentActivity extends AppCompatActivity {
                     String text = result.get(0);
                     if (text.equals("quay lại") || text.equals("back")) {
                         onBackPressed();
-                    } else {
-                        if (text.equals("đóng ứng dụng") || text.equals("exit")) {
-                            Intent startMain = new Intent(Intent.ACTION_MAIN);
-                            startMain.addCategory(Intent.CATEGORY_HOME);
-                            startActivity(startMain);
-                            finish();
-                        } else {
-                            if (text.equals("trang chủ") || text.equals("home")) {
-                                Intent startMain = new Intent(this, MainActivity.class);
-                                startActivity(startMain);
-                            }
-                        }
+                    } else if (text.equals("thoát") || text.equals("exit")) {
+                        Intent startMain = new Intent(Intent.ACTION_MAIN);
+                        startMain.addCategory(Intent.CATEGORY_HOME);
+                        startActivity(startMain);
+                        finish();
+                    } else if (text.equals("trang chủ") || text.equals("home")) {
+                        Intent startMain = new Intent(this, MainActivity.class);
+                        startActivity(startMain);
+                    } else if (text.equals("tiếp")) {
+                        if (mVpgChapterContent.getCurrentItem() < mChapterNames.size() - 1)
+                            mVpgChapterContent.setCurrentItem(mVpgChapterContent.getCurrentItem() + 1);
+                    } else if (text.equals("trước")) {
+                        if (mVpgChapterContent.getCurrentItem() > 0)
+                            mVpgChapterContent.setCurrentItem(mVpgChapterContent.getCurrentItem() - 1);
                     }
                 }
-                break;
             }
         }
     }
-
 
 }

@@ -40,11 +40,9 @@ public class CommonUtils {
         File file = new File(filePath);
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
-            InputStreamReader fileReader = new InputStreamReader(fileInputStream, "UTF8");
+            InputStreamReader fileReader = new InputStreamReader(fileInputStream);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;
-            bufferedReader.readLine();
-            bufferedReader.readLine();
             while ((line = bufferedReader.readLine()) != null) {
                 text.append(line);
                 text.append("<br>");
@@ -78,13 +76,11 @@ public class CommonUtils {
         return dialog;
     }
 
-    public static String highLightQueryInText(Context context, String query, String text, boolean caseSensitive) {
+    public static String highLightQueryInText(Context context, String query, String text) {
         String accentColor = Integer.toHexString(
                 ContextCompat.getColor(context, R.color.colorAccent) & 0x00ffffff);
-        if (caseSensitive) {
-            int index = text.toLowerCase().indexOf(query.toLowerCase());
-            query = text.substring(index, index + query.length());
-        }
+        int index = text.toLowerCase().indexOf(query.toLowerCase());
+        query = text.substring(index, index + query.length());
         return text.replace(
                 query,
                 "<b><font color=#" + accentColor + ">" + query + "</font></b>"
@@ -103,6 +99,7 @@ public class CommonUtils {
     }
 
     public static int findFirstPos2(String sen, String word) {
+        sen = sen.toLowerCase();
         int result = sen.indexOf(word);
         int tmp_length = sen.length();
         if (result != -1 && tmp_length > result + word.length()) {

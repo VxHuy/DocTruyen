@@ -1,6 +1,5 @@
 package studio.dinhduc.doctruyen.ui.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,13 +25,15 @@ import studio.dinhduc.doctruyen.model.SpellCheckResult;
 import studio.dinhduc.doctruyen.ui.adapter.SpellCheckResultAdapter;
 import studio.dinhduc.doctruyen.ui.constant.Const;
 import studio.dinhduc.doctruyen.ui.rule.Dictionary;
-import studio.dinhduc.doctruyen.util.CommonUtils;
 import studio.dinhduc.doctruyen.util.RuleUtils;
 
 public class SpellCheckResultActivity extends AppCompatActivity {
     private static final String TAG = "SpellCheckResultActivit";
     @BindView(R.id.tool_bar) Toolbar mToolBar;
-    @BindView(R.id.lv_spell_check) ListView mLvSpellCheck;
+    @BindView(R.id.lv_result) ListView mLvSpellCheck;
+    @BindView(R.id.pb_result_progress) ProgressBar mPbResultProgress;
+    @BindView(R.id.tv_result_count) TextView mTvResultCount;
+    @BindView(R.id.tv_result_chapter_count) TextView mTvResultChapterCount;
     private ArrayList<String> mChapterNames;
     private String mNovelDirPath;
     private Dictionary mDictionary;
@@ -41,7 +44,7 @@ public class SpellCheckResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spell_check_result);
+        setContentView(R.layout.activity_result);
         ButterKnife.bind(this);
         initView();
         getWidgetControl();
@@ -55,7 +58,10 @@ public class SpellCheckResultActivity extends AppCompatActivity {
         mChapterNames = intent.getStringArrayListExtra(Const.KeyIntent.KEY_LIST_CHAPTER_NAME);
         mNovelDirPath = intent.getStringExtra(Const.KeyIntent.KEY_NOVEL_PATH);
         mDictionary = new Dictionary();
-        mDictionary.build(Const.APP_DIR_PATH + File.separator + "Viet74K.txt");
+        mDictionary.build(this, "dictionary.txt");
+        mPbResultProgress.setMax(mChapterNames.size());
+        mAdapter = new SpellCheckResultAdapter(getBaseContext(), R.layout.item_result, mSpellCheckResults);
+        mLvSpellCheck.setAdapter(mAdapter);
         RuleUtils.setUp();
         checkSpell();
     }
@@ -77,17 +83,17 @@ public class SpellCheckResultActivity extends AppCompatActivity {
     }
 
     private void checkSpell() {
-        final ProgressDialog progressDialog = CommonUtils.showProgressLoadingDialog(this);
-        progressDialog.setMax(mChapterNames.size());
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < mChapterNames.size(); i++) {
+                final int chapterSize = mChapterNames.size();
+                for (int i = 0; i < chapterSize; i++) {
                     final int finalI1 = i;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            progressDialog.setProgress(finalI1 + 1);
+                            mPbResultProgress.setProgress(finalI1 + 1);
+                            mTvResultChapterCount.setText("Chương: " + (finalI1 + 1) + "/" + chapterSize);
                         }
                     });
                     File file = new File(mNovelDirPath + File.separator + mChapterNames.get(i));
@@ -97,20 +103,26 @@ public class SpellCheckResultActivity extends AppCompatActivity {
                         BufferedReader bufferedReader = new BufferedReader(fileReader);
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
-//                                Log.d(TAG, line);
                             final String[] mWords = line.split("\\s+");
-//                                Log.d(TAG, "run: ");
-                            for (String mWord : mWords) {
-                                String word = mWord;
+                            for (String word : mWords) {
                                 word = deleteSign(word);
-                                if (!mDictionary.contains(word) && RuleUtils.check(word) && !word.equals("")) {
-                                    Log.d(TAG, "test: " + "-" + word + "-");
-                                    SpellCheckResult result = new SpellCheckResult();
-                                    result.setWord(word);
-                                    result.setChapterName(mChapterNames.get(i));
-                                    result.setLine(CommonUtils.highLightQueryInText(getBaseContext(), word, line, false));
-                                    mSpellCheckResults.add(result);
-                                    count++;
+                                if (!mDictionary.contains(word)) {
+                                    if (RuleUtils.check(word) && !word.equals("")) {
+                                        Log.d(TAG, "test: " + "-" + word + "-");
+                                        final SpellCheckResult result = new SpellCheckResult();
+                                        result.setWord(word);
+                                        result.setChapterName(mChapterNames.get(i));
+                                        result.setLine(line);
+                                        count++;
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mSpellCheckResults.add(result);
+                                                mAdapter.notifyDataSetChanged();
+                                                mTvResultCount.setText("Số từ: " + count);
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -120,14 +132,6 @@ public class SpellCheckResultActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter = new SpellCheckResultAdapter(getBaseContext(), R.layout.item_result, mSpellCheckResults);
-                        mLvSpellCheck.setAdapter(mAdapter);
-                        progressDialog.cancel();
-                    }
-                });
             }
         }).start();
     }

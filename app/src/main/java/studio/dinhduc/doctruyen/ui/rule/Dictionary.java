@@ -1,9 +1,11 @@
 package studio.dinhduc.doctruyen.ui.rule;
 
 
+import android.content.Context;
+
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Dictionary {
     private int BUCKET_COUNT = 1319; //prime number
@@ -23,6 +25,7 @@ public class Dictionary {
 
     //call hash() to decide which bucket to put it in, do it.
     public void add(String key) {
+        key = key.toLowerCase();
         mBuckets[hash(key)].put(key);
     }
 
@@ -32,9 +35,10 @@ public class Dictionary {
         return mBuckets[hash(input)].get(input);
     }
 
-    public void build(String filePath) {
+    public void build(Context context, String filePath) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            InputStreamReader inputStreamReader = new InputStreamReader(context.getAssets().open(filePath));
+            BufferedReader reader = new BufferedReader(inputStreamReader);
             String line;
             while ((line = reader.readLine()) != null) {
                 add(line);
@@ -43,22 +47,6 @@ public class Dictionary {
             ioe.printStackTrace();
         }
 
-    }
-
-    //this method is used in my unit tests
-    public String[] getRandomEntries(int num) {
-        String[] toRet = new String[num];
-        for (int i = 0; i < num; i++) {
-            //pick a random bucket, go out a random number 
-            Bucket.Node n = mBuckets[(int) (Math.random() * BUCKET_COUNT)].first;
-            int rand = (int) (Math.random() * (int) Math.sqrt(num));
-
-            for (int j = 0; j < rand && n.next != null; j++) n = n.next;
-            toRet[i] = n.word;
-
-
-        }
-        return toRet;
     }
 
     class Bucket {

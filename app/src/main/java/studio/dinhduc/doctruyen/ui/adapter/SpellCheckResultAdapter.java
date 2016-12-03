@@ -16,6 +16,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import studio.dinhduc.doctruyen.R;
 import studio.dinhduc.doctruyen.model.SpellCheckResult;
+import studio.dinhduc.doctruyen.util.CommonUtils;
 
 /**
  * Created by dinhduc on 02/12/2016.
@@ -29,7 +30,7 @@ public class SpellCheckResultAdapter extends ArrayAdapter<SpellCheckResult> {
     public SpellCheckResultAdapter(Context context, int resource, List<SpellCheckResult> objects) {
         super(context, resource, objects);
         mContext = context;
-        mSpellCheckResults = new ArrayList<>(objects);
+        mSpellCheckResults = (ArrayList<SpellCheckResult>) objects;
         mLayoutId = resource;
     }
 
@@ -48,6 +49,11 @@ public class SpellCheckResultAdapter extends ArrayAdapter<SpellCheckResult> {
         return convertView;
     }
 
+    @Override
+    public int getCount() {
+        return mSpellCheckResults.size();
+    }
+
     class SpellCheckViewHolder {
         @BindView(R.id.tv_result_name)
         TextView mTvChapterName;
@@ -59,8 +65,11 @@ public class SpellCheckResultAdapter extends ArrayAdapter<SpellCheckResult> {
         }
 
         private void bindData(SpellCheckResult spellCheckResult) {
+            String chapterContent = spellCheckResult.getLine();
+            chapterContent = CommonUtils.highLightQueryInText(
+                    mContext, spellCheckResult.getWord(), chapterContent);
             mTvChapterName.setText(spellCheckResult.getChapterName());
-            mTvResultContent.setText(Html.fromHtml(spellCheckResult.getLine()));
+            mTvResultContent.setText(Html.fromHtml(chapterContent));
         }
     }
 }
