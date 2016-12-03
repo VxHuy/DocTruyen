@@ -8,9 +8,8 @@ package studio.dinhduc.doctruyen.ui.rule;
 public class Rule0 implements Rule {
     @Override
     public boolean checkInvalidate(String word) {
-        String check = "-aáàảạóồôổơởờợớuúùủụưứừeèêếỉịĩìyý";
+        String check = "aáàảạóồôổơởờợớuúùủụưứừeèêếỉịĩìyý";
         if (word.length()==1){
-            word = word.toLowerCase();
             if (!check.contains(word)){
                 return true;
             }

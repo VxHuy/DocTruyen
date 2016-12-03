@@ -15,7 +15,6 @@ public class Rule14 implements Rule {
         String check_pre = "qrtpsdghklxcvbnmđ yýỳỷỹỵưứừửữự";
         String check_next = "qrtpsdklxcvbnmđ";
 
-        word = word.toLowerCase();
         int latter = word.length()-1;
 
         // n dung cuoi

@@ -20,6 +20,7 @@ import studio.dinhduc.doctruyen.ui.rule.Rule20;
 import studio.dinhduc.doctruyen.ui.rule.Rule21;
 import studio.dinhduc.doctruyen.ui.rule.Rule22;
 import studio.dinhduc.doctruyen.ui.rule.Rule23;
+import studio.dinhduc.doctruyen.ui.rule.Rule24;
 import studio.dinhduc.doctruyen.ui.rule.Rule3;
 import studio.dinhduc.doctruyen.ui.rule.Rule4;
 import studio.dinhduc.doctruyen.ui.rule.Rule5;
@@ -61,6 +62,7 @@ public class RuleUtils {
         Rule rule21 = new Rule21();
         Rule rule22 = new Rule22();
         Rule rule23 = new Rule23();
+        Rule rule24 = new Rule24();
 
         mRules.add(rule0);
         mRules.add(rule1);
@@ -71,6 +73,7 @@ public class RuleUtils {
         mRules.add(rule6);
         mRules.add(rule7);
         mRules.add(rule8);
+        mRules.add(rule24);
         mRules.add(rule9);
         mRules.add(rule10);
         mRules.add(rule11);
@@ -90,6 +93,21 @@ public class RuleUtils {
 
     // check word with all rules
     public static boolean check(String word) {
+        // check number
+        String numbers = "0123456789";
+        boolean check = true;
+        for (int i=0; i<word.length(); i++){
+            if (!numbers.contains(""+word.charAt(i))){
+                check = false;
+                break;
+            }
+        }
+        if (check){
+            return false;
+        }
+
+        // check rule
+        word = word.toLowerCase();
         if (word.length() == 1) {
             if (mRules.get(0).checkInvalidate(word)) {
                 return true;

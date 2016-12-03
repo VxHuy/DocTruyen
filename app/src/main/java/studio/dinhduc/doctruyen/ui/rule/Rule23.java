@@ -15,7 +15,7 @@ public class Rule23 implements Rule {
                 "úi", "ủi", "ưu", "uy", "úy", "ủy"};
         String[] three_vowels = {"yêu", "yếu", "yểu", "oai", "oái", "oải", "ươi"};
         String consonant = "qrtpsdghklxcvbnmđ";
-        word = word.toLowerCase();
+
         for (int i=0; i<word.length();i++){
             if (consonant.contains(""+word.charAt(i)))
                 return false;

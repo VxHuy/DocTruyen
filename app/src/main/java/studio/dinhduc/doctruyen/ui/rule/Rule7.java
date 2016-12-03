@@ -9,8 +9,6 @@ public class Rule7 implements Rule {
     @Override
     public boolean checkInvalidate(String word) {
 
-        word = word.toLowerCase();
-
         for (int i=0; i<(word.length()-1); i++){
             if ((!(word.charAt(i)=='o'))&&(word.charAt(i)==word.charAt(i+1))){
                 return true;

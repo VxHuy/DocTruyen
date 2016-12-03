@@ -103,9 +103,9 @@ public class SpellCheckResultActivity extends AppCompatActivity {
                         BufferedReader bufferedReader = new BufferedReader(fileReader);
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
-                            final String[] mWords = line.split("\\s+");
-                            for (String word : mWords) {
-                                word = deleteSign(word);
+                            line = deleteSign(line);
+                            final String[] words = line.split("\\s+");
+                            for (String word : words) {
                                 if (!mDictionary.contains(word)) {
                                     if (RuleUtils.check(word) && !word.equals("")) {
                                         Log.d(TAG, "test: " + "-" + word + "-");
@@ -137,18 +137,10 @@ public class SpellCheckResultActivity extends AppCompatActivity {
     }
 
     // delete sign: ? : ! ...
-    private String deleteSign(String word) {
+    private String deleteSign(String words) {
 
-        String sign = "?.,;:\"!)";
-        if (word.length() > 0) {
-            if ((word.charAt(0) == '"') || (word.charAt(0) == '(')) {
-                word = word.substring(1);
-            }
-        }
-        while ((word.length() > 0) && (sign.contains("" + word.charAt(word.length() - 1)))) {
-            word = word.substring(0, word.length() - 1);
-        }
-        return word;
+        words = words.replaceAll("[?.,:;\"!()-]", " ");
+        return words;
     }
 
     @Override
