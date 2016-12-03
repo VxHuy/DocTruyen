@@ -6,8 +6,6 @@ package studio.dinhduc.doctruyen.ui.rule;
 public class RemoveAccent {
     public static String removeAccent(String str){
 
-        str= str.toLowerCase();
-
         str= str.replaceAll("[àáạảã]","a");
         str= str.replaceAll("[ằắặẳẵ]","ă");
         str= str.replaceAll("[ầấậẩẫ]","â");

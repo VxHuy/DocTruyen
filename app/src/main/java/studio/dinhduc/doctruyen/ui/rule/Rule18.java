@@ -11,7 +11,6 @@ public class Rule18 implements Rule {
     public boolean checkInvalidate(String word) {
 
         String sound_buffer = "oa oă oe uê uâ";
-        word = word.toLowerCase();
 
         if (word.charAt(0)=='s'){
             if (word.equals("soát")||word.equals("soạt")||word.equals("soạn")||word.equals("soạng")||word.equals("suất")){

@@ -11,17 +11,16 @@ public class Rule9 implements Rule {
     public boolean checkInvalidate(String word) {
 
         String consonant = "qrtpsdghklxcvbnmđ";
-        String check_y = "yýỳỷỹỵ";
+        String check_pre = "áạặắấậéẹệếíịóọốộớợúụứ";
         int leng = word.length();
         String check_h_r = "hr";
-        word = word.toLowerCase();
 
         // 't' dung cuoi tu
         if (word.charAt(leng-1)=='t'){
             if (word.equals("suýt")){
                 return false;
             }
-            if (consonant.contains(""+word.charAt(leng-2))||check_y.contains(""+word.charAt(leng-2))){
+            if (!check_pre.contains(""+word.charAt(leng-2))){
                 return true;
             }
         }

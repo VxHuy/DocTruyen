@@ -13,7 +13,6 @@ public class Rule22 implements Rule {
 
         String consonant = "qrtpsdghklxcvbnmđ";
         String vowels_not_accent = "aăâoôơeêuưiy";
-        word = word.toLowerCase();
         String vowels = "";
         int latter = 0;
 

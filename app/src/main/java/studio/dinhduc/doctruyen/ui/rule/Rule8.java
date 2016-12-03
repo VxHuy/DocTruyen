@@ -11,8 +11,8 @@ public class Rule8 implements Rule {
     @Override
     public boolean checkInvalidate(String word) {
 
-        String consonant = "qrtpsdghklxcvbnmđQRTPSDGHKLXCVBNMĐ";
-        String not_consonant_follow = "qrsdhlxvbmđQRSDHLXVBMĐ";
+        String consonant = "qrtpsdghklxcvbnmđ";
+        String not_consonant_follow = "qrsdhlxvbmđ";
 
         for (int i=0; i<(word.length()-1); i++){
             if (not_consonant_follow.contains(""+word.charAt(i)) && consonant.contains(""+word.charAt(i+1))){

@@ -8,7 +8,7 @@ package studio.dinhduc.doctruyen.ui.rule;
 public class Rule5 implements Rule {
     @Override
     public boolean checkInvalidate(String word) {
-        String consonant = "qrtpsdghklxcvbnmđQRTPSDGHKLXCVBNMĐ";
+        String consonant = "qrtpsdghklxcvbnmđ";
         int[] vowel = new int[3];
         int count = 0;
         for (int i=0; i<word.length(); i++){

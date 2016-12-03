@@ -15,8 +15,6 @@ public class Rule6 implements Rule {
         String consonant_just_ahead = "qsdklxvbđ";
         String consonant_not_mid = "tpm";
 
-        word = word.toLowerCase();
-
         // latter
         if (consonant_not_latter.contains("" + word.charAt(word.length()-1))){
             return true;

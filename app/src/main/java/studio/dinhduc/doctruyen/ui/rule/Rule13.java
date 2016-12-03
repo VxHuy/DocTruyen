@@ -10,14 +10,13 @@ public class Rule13 implements Rule{
     @Override
     public boolean checkInvalidate(String word) {
 
-        String check_pre = "qrtpsdghklxcvbnmđ yýỳỷỹỵiíìỉĩị";
+        String check_pre = "áạặắấậéẹếệíịóọốộớợúụứự";
         String check_next = "qrtpsdgklxcvbnmđ yýỳỷỹỵêếềểễệiíìỉĩịeéèẻẽẹ";
 
-        word = word.toLowerCase();
         int latter = word.length()-1;
 
         // c dung cuoi
-        if ((word.charAt(latter)=='c')&&check_pre.contains(""+word.charAt(latter-1))){
+        if ((word.charAt(latter)=='c')&&(!check_pre.contains(""+word.charAt(latter-1)))){
                 return true;
         }
 
