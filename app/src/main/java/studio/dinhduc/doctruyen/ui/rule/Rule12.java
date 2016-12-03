@@ -16,8 +16,6 @@ public class Rule12 implements Rule {
         String check_h = "nc";
         int latter = word.length()-1;
 
-        word = word.toLowerCase();
-
         // h dung cuoi tu
         if (word.charAt(latter)=='h'&&(!check_h.contains(""+word.charAt(latter-1)))){
             return true;

@@ -13,7 +13,6 @@ public class Rule15 implements Rule {
         String consonant = "qrtpsdghklxcvbnmđ";
         String check_pre = "qrtpsdghklxcvbnmđ yýỳỷỹỵưứừửữự";
 
-        word = word.toLowerCase();
         int latter = word.length()-1;
 
         // m dung cuoi

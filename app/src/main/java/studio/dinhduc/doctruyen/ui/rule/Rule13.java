@@ -13,7 +13,6 @@ public class Rule13 implements Rule{
         String check_pre = "qrtpsdghklxcvbnmđ yýỳỷỹỵiíìỉĩị";
         String check_next = "qrtpsdgklxcvbnmđ yýỳỷỹỵêếềểễệiíìỉĩịeéèẻẽẹ";
 
-        word = word.toLowerCase();
         int latter = word.length()-1;
 
         // c dung cuoi

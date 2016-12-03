@@ -10,9 +10,8 @@ public class Rule11 implements Rule{
     @Override
     public boolean checkInvalidate(String word) {
 
-        String check_invalid = "qrtpsdgklxcvbnmđeéèẻẽẹêếềểễệ";
+        String check_valid = "haăâoôơuưiy";
         int latter = word.length()-1;
-        word = word.toLowerCase();
 
         // 'g' dung cuoi tu
         if (word.charAt(latter)=='g'){
@@ -23,7 +22,8 @@ public class Rule11 implements Rule{
 
         // 'g' dung dau tu
         if (word.charAt(0)=='g'){
-            if (check_invalid.contains(""+word.charAt(1))){
+            word = RemoveAccent.removeAccent(word);
+            if (!check_valid.contains(""+word.charAt(1))){
                 return true;
             }
         }

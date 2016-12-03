@@ -10,15 +10,13 @@ public class Rule10 implements Rule {
     @Override
     public boolean checkInvalidate(String word) {
 
-        String consonant = "qrtpsdghklxcvbnmđ";
-        String check_u_y = "ưứừửữựyýỳỷỹỵ";
+        String check_pre = "aăâoôơueêi";
         int latter = word.length()-1;
-        word = word.toLowerCase();
 
         // 'p' dung cuoi tu
         if (word.charAt(latter)=='p'){
-            if (consonant.contains(""+word.charAt(latter-1)) ||
-                    check_u_y.contains(""+word.charAt(latter-1))){
+            word = RemoveAccent.removeAccent(word);
+            if (!check_pre.contains(""+word.charAt(latter-1))){
                 return true;
             }
         }

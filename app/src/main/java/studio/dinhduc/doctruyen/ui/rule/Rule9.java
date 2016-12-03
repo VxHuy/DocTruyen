@@ -14,7 +14,6 @@ public class Rule9 implements Rule {
         String check_y = "yýỳỷỹỵ";
         int leng = word.length();
         String check_h_r = "hr";
-        word = word.toLowerCase();
 
         // 't' dung cuoi tu
         if (word.charAt(leng-1)=='t'){

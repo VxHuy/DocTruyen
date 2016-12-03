@@ -93,6 +93,21 @@ public class RuleUtils {
 
     // check word with all rules
     public static boolean check(String word) {
+        // check number
+        String numbers = "0123456789";
+        boolean check = true;
+        for (int i=0; i<word.length(); i++){
+            if (!numbers.contains(""+word.charAt(i))){
+                check = false;
+                break;
+            }
+        }
+        if (check){
+            return false;
+        }
+
+        // check rule
+        word = word.toLowerCase();
         if (word.length() == 1) {
             if (mRules.get(0).checkInvalidate(word)) {
                 return true;
