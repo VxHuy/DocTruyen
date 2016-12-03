@@ -10,12 +10,11 @@ public class Rule10 implements Rule {
     @Override
     public boolean checkInvalidate(String word) {
 
-        String check_pre = "aăâoôơueêi";
+        String check_pre = "áạặắấậéẹếệíịóọốộớợúụứự";
         int latter = word.length()-1;
 
         // 'p' dung cuoi tu
         if (word.charAt(latter)=='p'){
-            word = RemoveAccent.removeAccent(word);
             if (!check_pre.contains(""+word.charAt(latter-1))){
                 return true;
             }
