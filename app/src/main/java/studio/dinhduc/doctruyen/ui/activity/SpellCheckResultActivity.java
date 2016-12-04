@@ -99,30 +99,29 @@ public class SpellCheckResultActivity extends AppCompatActivity {
                     File file = new File(mNovelDirPath + File.separator + mChapterNames.get(i));
                     try {
                         FileInputStream fileInputStream = new FileInputStream(file);
-                        InputStreamReader fileReader = new InputStreamReader(fileInputStream, "UTF8");
+                        InputStreamReader fileReader = new InputStreamReader(fileInputStream);
                         BufferedReader bufferedReader = new BufferedReader(fileReader);
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
+                            Log.d(TAG, line);
                             line = deleteSign(line);
                             final String[] words = line.split("\\s+");
                             for (String word : words) {
-                                if (!mDictionary.contains(word)) {
-                                    if (RuleUtils.check(word) && !word.equals("")) {
-                                        Log.d(TAG, "test: " + "-" + word + "-");
-                                        final SpellCheckResult result = new SpellCheckResult();
-                                        result.setWord(word);
-                                        result.setChapterName(mChapterNames.get(i));
-                                        result.setLine(line);
-                                        count++;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                mSpellCheckResults.add(result);
-                                                mAdapter.notifyDataSetChanged();
-                                                mTvResultCount.setText("Số từ: " + count);
-                                            }
-                                        });
-                                    }
+                                if (!mDictionary.contains(word) && RuleUtils.check(word) && !word.equals("")) {
+                                    Log.d(TAG, "test: " + "-" + word + "-");
+                                    final SpellCheckResult result = new SpellCheckResult();
+                                    result.setWord(word);
+                                    result.setChapterName(mChapterNames.get(i));
+                                    result.setLine(line);
+                                    count++;
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            mSpellCheckResults.add(result);
+                                            mAdapter.notifyDataSetChanged();
+                                            mTvResultCount.setText("Số từ: " + count);
+                                        }
+                                    });
                                 }
                             }
                         }

@@ -276,10 +276,13 @@ public class CommonUtils {
             searchResult.setLvResult(senMax.getSubResult().length());
             searchResult.setSentence(END_OF_SENTENCE.split(chapterContent1)[senMax.getPosition()]);
             searchResult.setSearchQuery(senMax.getSubResult());
-            return searchResult;
+            if(searchResult.getSentence().toLowerCase().contains(searchResult.getSearchQuery().toLowerCase()))
+                return searchResult;
+            else return null;
         }
         return null;
     }
+
 
     private static void TRY(int value_previous, int k, Sentence sen) {
         if (ValueMax.size() == sen.getExpected()) return;

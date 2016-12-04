@@ -54,7 +54,7 @@ public class ChapterContentAdapter extends PagerAdapter {
             mSvChapterContent.post(new Runnable() {
                 @Override
                 public void run() {
-                    int offset = content.indexOf(mSearchQuery);
+                    int offset = content.toLowerCase().indexOf(mSearchQuery.toLowerCase());
                     // get line number from index
                     int line = mTvChapterContent.getLayout().getLineForOffset(offset);
                     // get coordinateY in textview
