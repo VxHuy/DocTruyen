@@ -26,7 +26,9 @@ public class Dictionary {
     //call hash() to decide which bucket to put it in, do it.
     public void add(String key) {
         key = key.toLowerCase();
-        mBuckets[hash(key)].put(key);
+        if (!key.contains(" ")) {
+            mBuckets[hash(key)].put(key);
+        }
     }
 
     //call hash() to find what bucket it's in, get it from that bucket. 

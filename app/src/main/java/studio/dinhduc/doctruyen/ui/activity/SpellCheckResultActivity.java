@@ -40,6 +40,7 @@ public class SpellCheckResultActivity extends AppCompatActivity {
     private int count = 0;
     private ArrayList<SpellCheckResult> mSpellCheckResults = new ArrayList<>();
     private SpellCheckResultAdapter mAdapter;
+    private Thread mThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,12 +84,13 @@ public class SpellCheckResultActivity extends AppCompatActivity {
     }
 
     private void checkSpell() {
-        new Thread(new Runnable() {
+        mThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 final int chapterSize = mChapterNames.size();
                 for (int i = 0; i < chapterSize; i++) {
                     final int finalI1 = i;
+                    Log.d(TAG, "run: " + i);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -103,12 +105,17 @@ public class SpellCheckResultActivity extends AppCompatActivity {
                         BufferedReader bufferedReader = new BufferedReader(fileReader);
                         String line;
                         while ((line = bufferedReader.readLine()) != null) {
-                            Log.d(TAG, line);
+                            if (mThread.isInterrupted()){
+                                mThread = null;
+                                System.gc();
+                                return;
+                            }
+//                            Log.d(TAG, line);
                             line = deleteSign(line);
                             final String[] words = line.split("\\s+");
                             for (String word : words) {
                                 if (!mDictionary.contains(word) && RuleUtils.check(word) && !word.equals("")) {
-                                    Log.d(TAG, "test: " + "-" + word + "-");
+//                                    Log.d(TAG, "test: " + "-" + word + "-");
                                     final SpellCheckResult result = new SpellCheckResult();
                                     result.setWord(word);
                                     result.setChapterName(mChapterNames.get(i));
@@ -132,7 +139,8 @@ public class SpellCheckResultActivity extends AppCompatActivity {
                     }
                 }
             }
-        }).start();
+        });
+        mThread.start();
     }
 
     // delete sign: ? : ! ...
@@ -147,5 +155,13 @@ public class SpellCheckResultActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return super.onSupportNavigateUp();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mThread != null) {
+            mThread.interrupt();
+        }
+        super.onDestroy();
     }
 }

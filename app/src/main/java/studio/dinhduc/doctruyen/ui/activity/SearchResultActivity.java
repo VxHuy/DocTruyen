@@ -39,6 +39,7 @@ public class SearchResultActivity extends AppCompatActivity {
     private ArrayList<String> mChapterNames;
     private String mSearchQuery;
     private int mCount = 0;
+    private Thread mThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +62,18 @@ public class SearchResultActivity extends AppCompatActivity {
                 getBaseContext(), R.layout.item_result, mSearchResults);
         mLvSearchResult.setAdapter(mAdapter);
         mPbResultProgress.setMax(mChapterNames.size());
-        new Thread(new Runnable() {
+        mThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 final int chapterSize = mChapterNames.size();
                 for (int i = 0; i < chapterSize; i++) {
+                    if (mThread.isInterrupted()) {
+                        mThread = null;
+                        System.gc();
+                        return;
+                    }
                     final int finalI1 = i;
-//                    Log.d(TAG, "run: " + progress);
+                    Log.d(TAG, "run: " + i);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -118,7 +124,8 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
 
             }
-        }).start();
+        });
+        mThread.start();
     }
 
     private void getWidgetControl() {
@@ -147,4 +154,11 @@ public class SearchResultActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        if (mThread != null) {
+            mThread.interrupt();
+        }
+        super.onDestroy();
+    }
 }

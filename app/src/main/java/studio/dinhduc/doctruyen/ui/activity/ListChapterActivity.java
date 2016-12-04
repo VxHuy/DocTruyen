@@ -8,7 +8,6 @@ import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -118,7 +117,7 @@ public class ListChapterActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(final String query) {
-                Log.d(TAG, "onQueryTextSubmit: " + query);
+//                Log.d(TAG, "onQueryTextSubmit: " + query);
                 startSearch(query);
                 mSearchView.clearFocus();
                 return true;
@@ -193,7 +192,7 @@ public class ListChapterActivity extends AppCompatActivity {
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String text = result.get(0);
-                    Log.d(TAG, "onActivityResult: " + text);
+//                    Log.d(TAG, "onActivityResult: " + text);
                     if (text.equals("quay lại") || text.equals("back")) {
                         onBackPressed();
                     } else {
