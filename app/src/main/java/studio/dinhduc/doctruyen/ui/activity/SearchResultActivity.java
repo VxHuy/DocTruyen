@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -105,8 +106,9 @@ public class SearchResultActivity extends AppCompatActivity {
                             public void run() {
                                 if (finalSearchResult != null) {
                                     mSearchResults.add(finalSearchResult);
+                                    Collections.sort(mSearchResults);
                                     mAdapter.notifyDataSetChanged();
-                                    mTvResultCount.setText("Số từ: " + mCount);
+                                    mTvResultCount.setText("Có " + mCount + " kết quả tìm kiếm từ: \"" + mSearchQuery + "\"");
                                 }
                             }
                         });
