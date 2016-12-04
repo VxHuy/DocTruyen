@@ -146,8 +146,8 @@ public class SpellCheckResultActivity extends AppCompatActivity {
     // delete sign: ? : ! ...
     private String deleteSign(String words) {
 
-        words = words.replaceAll("[?.,:;\"!()-]", " ");
-        words = words.replaceAll("[…–]"," ");
+        words = words.replaceAll("[?.,:;'\"!()-]", " ");
+        words = words.replaceAll("[，…？；！。–]", " ");
         return words;
     }
 
